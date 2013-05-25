@@ -1,0 +1,112 @@
+
+body {
+	background-color : #fff;
+	color : #001;
+}
+
+.entete {
+	position: absolute;
+	top: 0;
+	left : 0;
+	text-align : center;
+	font-size : 1em;
+	font-weight : bold;
+	width : 100%;
+	padding-bottom : 0em;
+	border-bottom : 1px solid #ddf ;
+	background-color : #fff;
+}
+
+.entete a {
+	color: black;
+	text-decoration: none;
+}
+
+.piedpage {
+	bottom: 0;
+	left : 0;
+	text-align : center;
+	font-size : 0.8em;
+	width : 100%;
+	padding-top : 0.5em;
+	padding-bottom : 0.2em;
+	margin-bottom:0;
+	margin-top:1em;
+	border-top : 1px solid #ddf ;
+	background-color : #fff;
+}
+
+.piedpage a {
+	text-decoration: none;
+}
+
+.avertissement {
+	color: red;
+}
+
+.invisible {
+	display: none;
+}
+
+.page {
+	margin-top: 2em;
+	margin-left : 2em;
+}
+
+html>body .menu, .entete {
+  position: fixed;
+}
+
+abbr {
+	cursor : help;
+}
+
+
+h1 {
+/*	text-align : center;*/
+	font-size : 1.5em;
+	font-weight : bold;
+	border-bottom: 1px dashed #aaa;
+}
+
+/* Table */
+table.ortho-list {
+	text-align : center;
+	margin: auto ;
+	border-collapse: collapse;
+}
+
+table.ortho-list th {
+	font-weight: bold ;
+	border: 1px solid #aaa ;
+	background: #efe ; 
+	padding: 0.3em ;
+}
+
+table.ortho-list td {
+/* 	font-weight: bold ; */
+	border: 1px solid #aaa ;
+	padding: 0.3em ;
+	padding-left: 0.8em ;
+	padding-right: 0.8em ;
+}
+
+table a {
+	text-decoration: none ;
+}
+
+.API {
+ font-family: 'DejaVu Sans', 'Lucida Grande', 'Arial Unicode MS', 'Lucida Sans Unicode', 'Charis SIL', 'Doulos SIL', Gentium, GentiumAlt, 'Adobe Pi Std', Code2000, 'Chrysanthi Unicode', 'TITUS Cyberbit Basic', 'Bitstream Cyberbit', 'Hiragino Kaku Gothic Pro', 'Matrix Unicode', sans-serif ;
+}
+
+.transcrit {
+	font-style: italic ;
+}
+
+#alphagramme {
+	font-size : 0.8em ;
+}
+
+.NB {
+	font-size : 0.8em ;
+}

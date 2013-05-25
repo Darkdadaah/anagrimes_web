@@ -1,0 +1,26 @@
+body {
+}
+
+.menu {
+	display : none;
+}
+
+.entete {
+	display : none;
+}
+
+.page {
+	margin-top: 0;
+	margin-left : 0;
+}
+
+/* Liens */
+a {
+	color : #000;
+	text-decoration : none;
+}
+
+p {
+	text-indent : 3em;
+	text-align: justify;
+}
