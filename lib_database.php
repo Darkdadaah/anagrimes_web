@@ -31,6 +31,10 @@ function dbconnect() {
                                  . mysql_error() . '</strong></p>';
         }
         unset($username);
+
+	// Make all queries in UTF-8
+	mb_internal_encoding("UTF-8");
+	mysql_query("SET NAMES 'utf8'") or die("Query failed");
  
         // restore error-reporting
 //        ini_set('error-reporting',$errorlevel);
