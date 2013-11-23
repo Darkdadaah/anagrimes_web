@@ -65,5 +65,6 @@
 		'interj' => 'interjection',
 		'prép' => 'préposition',
 		'prov' => 'proverbe',
+		'prénom' => 'prénom',
 	);
 ?>

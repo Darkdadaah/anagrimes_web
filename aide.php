@@ -18,9 +18,9 @@
 		<h3>Astérisque</h3>
 		<p>L'astérisque représente un ensemble de lettres indéfinies. Quelques exemples d'utilisation&nbsp;:</p>
 		<ul>
-			<li><a href="ortho.php?graphie=clair*&langue=fr">clair*</a> <small>(tous les mots commençant par « clair »)</small></li>
-			<li><a href="ortho.php?graphie=*clair&langue=fr">*clair</a> <small>(tous les mots finissant par « clair »)</small></li>
-			<li><a href="ortho.php?graphie=clair*ance&langue=fr">clair*ance</a> <small>(tous les mots commençant par « clair » et finissant par « ance »)</small></li>
+			<li><a href="chercher_graphie.php?graphie=clair*&langue=fr">clair*</a> <small>(tous les mots commençant par « clair »)</small></li>
+			<li><a href="chercher_graphie.php?graphie=*clair&langue=fr">*clair</a> <small>(tous les mots finissant par « clair »)</small></li>
+			<li><a href="chercher_graphie.php?graphie=clair*ance&langue=fr">clair*ance</a> <small>(tous les mots commençant par « clair » et finissant par « ance »)</small></li>
 		</ul>
 		<p>Il s'utilise ainsi&nbsp;:</p>
 		<ul>
@@ -32,9 +32,9 @@
 		<h3>Point d'interrogation</h3>
 		<p>Le point d'interrogation représente une lettre indéfinie. Quelques exemples d'utilisation&nbsp;:</p>
 		<ul>
-			<li><a href="ortho.php?graphie=clar??&langue=fr">clar??</a> <small>(tous les mots de 5 lettres commençant par « clar »)</small></li>
-			<li><a href="ortho.php?graphie=?clair&langue=fr">?clair</a> <small>(tous les mots de 5 lettres finissant par « clair »)</small></li>
-			<li><a href="ortho.php?graphie=clair???ance&langue=fr">clair???ance</a> <small>(tous les mots de 12 lettres commençant par « clair » et finissant par « ance »)</small></li>
+			<li><a href="chercher_graphie.php?graphie=clar??&langue=fr">clar??</a> <small>(tous les mots de 5 lettres commençant par « clar »)</small></li>
+			<li><a href="chercher_graphie.php?graphie=?clair&langue=fr">?clair</a> <small>(tous les mots de 5 lettres finissant par « clair »)</small></li>
+			<li><a href="chercher_graphie.php?graphie=clair???ance&langue=fr">clair???ance</a> <small>(tous les mots de 12 lettres commençant par « clair » et finissant par « ance »)</small></li>
 		</ul>
 		<p>Il s'utilise ainsi&nbsp;:</p>
 		<ul>
