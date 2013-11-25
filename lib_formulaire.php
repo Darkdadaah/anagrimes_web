@@ -84,7 +84,7 @@
 		if (sizeof($_GET)==0) {
 			$checked=$def_check ;
 		} else {
-			if ($_GET[$name]) {
+			if (isset($_GET[$name])) {
 				$checked = true ;
 			}
 		}
@@ -165,9 +165,9 @@
 			print "<tr>\n" ;
 			print "\t<th>Titre</th>\n" ;
 			if ($option['transcrit']) { print "\t<th>Transcription</th>\n" ; }
-                        if (!$option['no_pron']) { print "\t<th>Prononciation</th>\n" ; }
-			if (!$option['langue']) { print "\t<th>Langue</th>\n" ; }
-			if (!$option['type'] and !$option['no_type']) { print "\t<th>Type</th>\n" ; }
+                        if (!isset($option['no_pron'])) { print "\t<th>Prononciation</th>\n" ; }
+			if (!isset($option['langue'])) { print "\t<th>Langue</th>\n" ; }
+			if (!isset($option['type']) and !isset($option['no_type'])) { print "\t<th>Type</th>\n" ; }
 			print "</tr>\n" ;
 		
 		while ($ligne = mysql_fetch_array($resultat)) {
@@ -175,12 +175,12 @@
 			$pron = $ligne['pron'] ;
 			$ancre = '' ;
 			if ($option['langue'] or $ligne['langue']) {
-				$lang_name = $ligne['langue'] ? $ligne['langue'] : $option['langue'] ;
-				if ($option['type'] or $ligne['type'] and !$option['no_type']) {
-					$type_name = $ligne['type'] ? $ligne['type'] : $option['type'] ;
-					if ($ligne['loc']) { $type_name = 'loc-' . $type_name ; }
-					if ($ligne['flex']) { $type_name = 'flex-' . $type_name ; }
-					if ($ligne['num'] > 1) {
+				$lang_name = isset($ligne['langue']) ? $ligne['langue'] : $option['langue'] ;
+				if (isset($option['type']) or isset($ligne['type']) and !isset($option['no_type'])) {
+					$type_name = isset($ligne['type']) ? $ligne['type'] : $option['type'] ;
+					if (isset($ligne['loc'])) { $type_name = 'loc-' . $type_name ; }
+					if (isset($ligne['flex'])) { $type_name = 'flex-' . $type_name ; }
+					if (isset($ligne['num']) and $ligne['num'] > 1) {
 						$ancre = '#' . $lang_name . '-' . $type_name . '-' . $ligne['num'] ;
 					} else {
 						$ancre = '#' . $lang_name . '-' . $type_name ;
@@ -193,14 +193,14 @@
 			print "\t<tr>" ;
 			print "<td><a href=\"//fr.wiktionary.org/wiki/$titre$ancre\">$titre</a></td>" ;
 			
-                        if ($option['transcrit']) {
+                        if (isset($option['transcrit'])) {
                                 $transcript_label = $ligne['transcrit'] ;
                                 print "\t<td class=\"transcrit\">$transcript_label</td>\n" ;
                         }
 			
-			if (!$option['no_pron']) {
+			if (!isset($option['no_pron'])) {
 				if ($pron) {
-// 					if ($option['pron_lien']) {
+// 					if (isset($option['pron_lien'])) {
 						print "<td><a href=\"chercher_prononciation.php?rime=$pron&langue=".$option['langue']."&place=exact#liste\">/<span class=\".API\">$pron</span>/</a></td>\n" ;
 // 					} else {
 // 						print "<td>/<span class=\".API\">$pron</span>/</a></td>\n" ;
@@ -209,7 +209,7 @@
 					print "<td><a href=\"//fr.wiktionary.org/wiki/$titre$ancre\"><abbr title=\"Pas de prononciation disponible. Cliquez pour accéder à l'article.\">//</abbr></a></td>\n" ;
 				}
 			}
-			if (!$option['langue']) {
+			if (!isset($option['langue'])) {
 				if ($langues[$ligne['langue']]) {
 					$lang_label = ucfirst($langues[$ligne['langue']]) ;
 					$langue_url = '//fr.wiktionary.org/wiki/Catégorie:'.$langues[$ligne['langue']] ;
@@ -219,9 +219,9 @@
 				}
 				print "\t<td>$lang_label</td>\n" ;
 			}
-			if (!$option['type'] and !$option['no_type']) {
+			if (!isset($option['type']) and !isset($option['no_type'])) {
 				$type_label = $types[$ligne['type']] ? ucfirst($types[$ligne['type']]) : $ligne['type'] ;
-				if ($ligne['num'] > 1) { $type_label = $type_label . ' ' . $ligne['num'] ; }
+				if (isset($ligne['num']) and $ligne['num'] > 1) { $type_label = $type_label . ' ' . $ligne['num'] ; }
 				print "\t<td>$type_label</td>\n" ;
 			}
 			print "</tr>\n" ;

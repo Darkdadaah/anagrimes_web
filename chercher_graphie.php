@@ -24,7 +24,7 @@
 			<p>
 				<?php
 				echo "<label for=\"graphie\">Graphie&nbsp;:&nbsp;<input type=\"text\" name=\"graphie\" id=\"graphie\" value=\"" ;
-				if ($_GET['graphie']) { echo $_GET['graphie'] ; }
+				if (isset($_GET['graphie'])) { echo $_GET['graphie'] ; }
 				echo "\" />" ;
 				?></label><input type="submit" value="Lancer la recherche" /><input type="button" onclick="form.graphie.value=''" value="Effacer" /><span><small>Vous pouvez <a href="aide.php">utiliser un joker</a> pour affiner la recherche.</small></span>
 			</p>
@@ -35,11 +35,11 @@
 			<li><? locutions(false); ?></li>
 			<li><? gentiles(false); ?></li>
 			<li><? nom_propre(false); ?></li>
-			<li><input type="checkbox" value="OK" name="no_diac" id="diacbox" <?php if ($_GET['no_diac']) { echo ' checked="checked"' ; } ?> /><label for="diacbox">&nbsp;Ne pas prendre en compte les diacritiques (accents) et les majuscules&nbsp;?</label></li>
-			<li><input type="checkbox" value="OK" name="transcrit" id="transcriptbox" <?php if ($_GET['transcrit']) { echo ' checked="checked"' ; } ?> /><label for="transcritbox">&nbsp;Rechercher par transcriptions/translittérations (approximatives)</label></li>
+			<li><input type="checkbox" value="OK" name="no_diac" id="diacbox" <?php if (isset($_GET['no_diac'])) { echo ' checked="checked"' ; } ?> /><label for="diacbox">&nbsp;Ne pas prendre en compte les diacritiques (accents) et les majuscules&nbsp;?</label></li>
+			<li><input type="checkbox" value="OK" name="transcrit" id="transcriptbox" <?php if (isset($_GET['transcrit'])) { echo ' checked="checked"' ; } ?> /><label for="transcritbox">&nbsp;Rechercher par transcriptions/translittérations (approximatives)</label></li>
 			</ul>
 		</fieldset>
-		<? listes($GET_['liste']); ?>
+		<? listes($_GET['liste']); ?>
 	
 	<input type="submit" value="Lancer la recherche" />
 	</fieldset>
@@ -55,14 +55,14 @@
 		die("La requète a échoué. Ceci est probablement dû à un bug dans le programme. Désolé pour la gêne occasionnée.") ;
 	}
 	
-	$graphie = mysql_real_escape_string($_GET['graphie']) ;
-	$titre = mysql_real_escape_string($_GET['titre']) ;
-	$liste = mysql_real_escape_string($_GET['liste']) ;
-	$no_diac = mysql_real_escape_string($_GET['no_diac']) ;
-	$transcrit = mysql_real_escape_string($_GET['transcrit']) ;
-	$langue = mysql_real_escape_string($_GET['langue']) ;
-	$type = mysql_real_escape_string($_GET['type']) ;
-	$depuis = mysql_real_escape_string($_GET['depuis']) ;
+	$graphie = isset($_GET['graphie']) ? mysql_real_escape_string($_GET['graphie']) : null;
+	$titre = isset($_GET['titre']) ? mysql_real_escape_string($_GET['titre']) : null;
+	$liste = isset($_GET['liste']) ? mysql_real_escape_string($_GET['liste']) : null;
+	$no_diac = isset($_GET['no_diac']) ? mysql_real_escape_string($_GET['no_diac']) : null;
+	$transcrit = isset($_GET['transcrit']) ? mysql_real_escape_string($_GET['transcrit']) : null;
+	$langue = isset($_GET['langue']) ? mysql_real_escape_string($_GET['langue']) : null;
+	$type = isset($_GET['type']) ? mysql_real_escape_string($_GET['type']) : null;
+	$depuis = isset($_GET['depuis']) ? mysql_real_escape_string($_GET['depuis']) : null;
 	
 	# Limit?
 	$max_by_page = 100 ;
@@ -77,6 +77,8 @@
 		# Pas d'espace au début ou à la fin
 		$graphie = preg_replace('/^\s+/', '', $graphie) ;
 		$graphie = preg_replace('/\s+$/', '', $graphie) ;
+		$select_transcrit = '';
+		$select_langue = '';
 		
 		echo "\t\t<h2 id=\"liste\">Résultats</h2>\n" ;
 		
@@ -98,6 +100,9 @@
 		
 		# Joker
 		$cond = joker($graphie, $titre, $r_titre) ;
+		$cond_langue = '';
+		$cond_type = '';
+
 		if ($cond) {
 			$cond_graphie = $cond ;
 			if ($langue) {
@@ -142,16 +147,16 @@
 				}
 			}
 		
-			if (!$_GET['flex'] or !($_GET['flex']=='oui')) {
+			if (!isset($_GET['flex']) or !$_GET['flex'] or !($_GET['flex']=='oui')) {
 				$cond .= " AND NOT flex" ;
 			}
-			if (!$_GET['loc'] or !($_GET['loc']=='oui')) {
+			if (!isset($_GET['loc']) or !$_GET['loc'] or !($_GET['loc']=='oui')) {
 				$cond .= " AND NOT loc" ;
 			}
-			if (!$_GET['gent'] or !($_GET['gent']=='oui')) {
+			if (!isset($_GET['gent']) or !$_GET['gent'] or !($_GET['gent']=='oui')) {
 				$cond .= " AND NOT gent" ;
 			}
-			if (!$_GET['nom_propre'] or !($_GET['nom_propre']=='oui')) {
+			if (!isset($_GET['nom_propre']) or !$_GET['nom_propre'] or !($_GET['nom_propre']=='oui')) {
 				$cond .= " AND NOT mots.type='nom-pr'" ;
 			}
 			
@@ -188,7 +193,8 @@
 					if ($cond_type != '') { echo " de type $type" ; }
 					if ($cond_langue != '') { echo " en $langues[$langue]" ; }
 					echo "&nbsp;:</p>\n" ;
-				
+					
+					$navigation_string = '';	
 					if ($num >= $max_by_page and $depuis+ $max_by_page < $num) {
 						# More pages than thought: navigation through the results
 						$target = $_SERVER['SCRIPT_NAME'] ;
