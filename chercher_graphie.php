@@ -28,8 +28,8 @@
 				echo "\" />" ;
 				?></label><input type="submit" value="Lancer la recherche" /><input type="button" onclick="form.graphie.value=''" value="Effacer" /><span><small>Vous pouvez <a href="aide.php">utiliser un joker</a> pour affiner la recherche.</small></span>
 			</p>
-			<? langues($_GET['langue']); ?>
-			<? types($_GET['type']); ?>
+			<? langues(isset($_GET['langue']) ? $_GET['langue'] : NULL); ?>
+			<? types(isset($_GET['type']) ? $_GET['type'] : NULL); ?>
 			<ul>
 			<li><? flexions(false); ?></li>
 			<li><? locutions(false); ?></li>
@@ -39,7 +39,7 @@
 			<li><input type="checkbox" value="OK" name="transcrit" id="transcriptbox" <?php if (isset($_GET['transcrit'])) { echo ' checked="checked"' ; } ?> /><label for="transcritbox">&nbsp;Rechercher par transcriptions/translittérations (approximatives)</label></li>
 			</ul>
 		</fieldset>
-		<? listes($_GET['liste']); ?>
+		<? listes(isset($_GET['liste']) ? $_GET['liste'] : NULL); ?>
 	
 	<input type="submit" value="Lancer la recherche" />
 	</fieldset>
