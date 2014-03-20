@@ -1,6 +1,6 @@
 <?php
-	//ini_set('log_errors',1);
-	//ini_set('error_log','/home/darkdadaah/logs/php.txt');
+	ini_set('log_errors',1);
+	ini_set('error_log','/data/project/anagrimes/php_errors.txt');
 /***************
 ** Database connection
 ***************/
@@ -9,12 +9,12 @@ function dbconnect() {
 //        $errorlevel = ini_set('error_reporting','1');
  	
         // connect
-        $mycnf = parse_ini_file("/data/project/anagrimes/.my.cnf");
+        $mycnf = parse_ini_file("/data/project/anagrimes/replica.my.cnf");
         $username = $mycnf['user'];
         $password = $mycnf['password'];
         unset($mycnf);
 	$hostname = 'tools-db';
-	$dbname = 'localanagrimes';
+	$dbname = $username . '__anagrimes2';
 	//echo "CONNECTION...\n";
         $db['connected'] = mysql_connect($hostname, $username, $password) 
                 or print '<p class="fail"><strong>Database server login failed.</strong> '

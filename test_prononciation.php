@@ -59,41 +59,41 @@
 		$mot0 = $mot ;
 		echo "\t\t<h2 id=\"liste\"> Résultats</h2>\n" ;
 		
-		$cond = " articles.titre IS NOT NULL";
-		$order = 'mots.titre' ;
+		$cond = " a_title IS NOT NULL";
+		$order = 'a_title_flat, a_title' ;
 		if ($no_diac) {
 			$mot_nu = non_diacritique($mot) ;
-			$cond_mot = "articles.titre_plat = '$mot_nu'" ;
+			$cond_mot = "a_title_flat = '$mot_nu'" ;
 		} else {
-			$cond_mot = "articles.titre = '$mot'" ;
+			$cond_mot = "a_title = '$mot'" ;
 		}
-		$order = 'mots.titre, mots.type, mots.num' ;
+		$order = 'a_title_flat, a_title, l_lang, l_type, l_num, p_num' ;
 		
 		if ($langue) {
-			$cond_langue = "mots.langue='$langue'" ;
+			$cond_langue = "l_lang='$langue'" ;
 		} else {
-			$select_langue = ", mots.langue" ;
+			$select_langue = ", l_lang" ;
 		}
 		
 		if ($type) {
 			switch($type) {
 				case 'nom-tous':
-					$cond_type = "(type='nom' OR type='nom-pr' OR type='loc-nom' OR type='loc-nom-pr')" ;
-					$select_type = ", mots.type" ;
+					$cond_type = "(l_type='nom' OR l_type='nom-pr' OR l_type='loc-nom' OR l_type='loc-nom-pr')" ;
+					$select_type = ", l_type" ;
 					break ;
 				default:
-					$cond_type = "(mots.type='$type' OR mots.type='loc-$type')" ;
+					$cond_type = "(l_type='$type' OR l_type='loc-$type')" ;
 					break ;
 			}
 		} else {
-			$select_type = ", mots.type" ;
+			$select_type = ", l_type" ;
 		}
 		if ($cond_langue) { $cond .= " AND $cond_langue" ; }
 		if ($cond_type) { $cond .= " AND $cond_type" ; }
 		
 		if ($cond and $cond_mot) {
 			# Compte
-			$requete_compte = "SELECT count(*) FROM articles LEFT JOIN mots ON articles.titre=mots.titre WHERE $cond AND $cond_mot" ;
+			$requete_compte = "SELECT count(*) FROM entries WHERE $cond AND $cond_mot" ;
 			echo "<!-- Requète compte : $requete_compte -->\n" ;
 			$resultat_compte = mysql_query($requete_compte) or die("Query failed");
 			$compte = mysql_fetch_array($resultat_compte) ;
@@ -120,7 +120,7 @@
 				
 			} else {
 				# Requète
-				$requete = "SELECT articles.titre, mots.pron, mots.flex, mots.loc, mots.num $select_type $select_langue FROM articles LEFT JOIN mots ON articles.titre=mots.titre WHERE $cond AND $cond_mot ORDER BY $order LIMIT $limit" ;
+				$requete = "SELECT a_title, p_pron, l_is_flexion, l_is_locution, l_num, p_num $select_type $select_langue FROM entries WHERE $cond AND $cond_mot ORDER BY $order LIMIT $limit" ;
 				echo "<!-- Requète : $requete -->\n" ;
 				
 				$resultat = mysql_query($requete) or die("Query failed");

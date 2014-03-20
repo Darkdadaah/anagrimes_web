@@ -23,20 +23,21 @@
 			<legend>Rechercher une partie de mot</legend>
 			<p>
 				<?php
-				echo "<label for=\"graphie\">Graphie&nbsp;:&nbsp;<input type=\"text\" name=\"graphie\" id=\"graphie\" value=\"" ;
-				if (isset($_GET['graphie'])) { echo $_GET['graphie'] ; }
-				echo "\" />" ;
-				?></label><input type="submit" value="Lancer la recherche" /><input type="button" onclick="form.graphie.value=''" value="Effacer" /><span><small>Vous pouvez <a href="aide.php">utiliser un joker</a> pour affiner la recherche.</small></span>
+				echo "<label for=\"graphie\">Graphie <sup><a href=\"aide.php\">(aide)</a></sup>&nbsp;:&nbsp;<input type=\"text\" name=\"graphie\" id=\"graphie\" value=\"";
+				if (isset($_GET['graphie'])) { echo $_GET['graphie']; }
+				echo "\" />";
+				?></label><input type="submit" value="Lancer la recherche" /><input type="button" onclick="form.graphie.value=''" value="Effacer" />
 			</p>
 			<? langues(isset($_GET['langue']) ? $_GET['langue'] : NULL); ?>
 			<? types(isset($_GET['type']) ? $_GET['type'] : NULL); ?>
+			<? listes(isset($_GET['liste']) ? $_GET['liste'] : NULL); ?>
 			<ul>
 			<li><? flexions(false); ?></li>
 			<li><? locutions(false); ?></li>
 			<li><? gentiles(false); ?></li>
 			<li><? nom_propre(false); ?></li>
-			<li><input type="checkbox" value="OK" name="no_diac" id="diacbox" <?php if (isset($_GET['no_diac'])) { echo ' checked="checked"' ; } ?> /><label for="diacbox">&nbsp;Ne pas prendre en compte les diacritiques (accents) et les majuscules&nbsp;?</label></li>
-			<li><input type="checkbox" value="OK" name="transcrit" id="transcriptbox" <?php if (isset($_GET['transcrit'])) { echo ' checked="checked"' ; } ?> /><label for="transcritbox">&nbsp;Rechercher par transcriptions/translittérations (approximatives)</label></li>
+			<li><input type="checkbox" value="OK" name="no_diac" id="diacbox" <?php if (isset($_GET['no_diac'])) { echo ' checked="checked"'; } ?> /><label for="diacbox">&nbsp;Ne pas prendre en compte les diacritiques (accents) et les majuscules&nbsp;?</label></li>
+			<li><input type="checkbox" value="OK" name="transcrit" id="transcriptbox" <?php if (isset($_GET['transcrit'])) { echo ' checked="checked"'; } ?> /><label for="transcritbox">&nbsp;Rechercher par transcriptions/translittérations (approximatives)</label></li>
 			</ul>
 		</fieldset>
 		<? listes(isset($_GET['liste']) ? $_GET['liste'] : NULL); ?>
@@ -44,15 +45,15 @@
 	<input type="submit" value="Lancer la recherche" />
 	</fieldset>
 	</form>
-	<script>var focusHere = document.getElementById('graphie') ; focusHere = focusHere.focus();</script>
+	<script>var focusHere = document.getElementById('graphie'); focusHere = focusHere.focus();</script>
 <?php
-	require('lib_database.php') ;
-	dbconnect() ;
+	require('lib_database.php');
+	dbconnect();
 	
 	
 	function die_graphie($requete, $message) {
-		log_action('erreur_requete', "$message\t[ $requete ]") ;
-		die("La requète a échoué. Ceci est probablement dû à un bug dans le programme. Désolé pour la gêne occasionnée.") ;
+		log_action('erreur_requete', "$message\t[ $requete ]");
+		die("La requète a échoué. Ceci est probablement dû à un bug dans le programme. Désolé pour la gêne occasionnée.");
 	}
 	
 	$graphie = isset($_GET['graphie']) ? mysql_real_escape_string($_GET['graphie']) : null;
@@ -63,101 +64,104 @@
 	$langue = isset($_GET['langue']) ? mysql_real_escape_string($_GET['langue']) : null;
 	$type = isset($_GET['type']) ? mysql_real_escape_string($_GET['type']) : null;
 	$depuis = isset($_GET['depuis']) ? mysql_real_escape_string($_GET['depuis']) : null;
+
+	if ($type == '') { $type = NULL; }
+	if ($langue == '') { $langue = NULL; }
 	
 	# Limit?
-	$max_by_page = 100 ;
+	$max_by_page = 100;
 	if (!$depuis or $depuis < 0) {
-		$depuis = 0 ;
-		$next = $depuis + $max_by_page ;
+		$depuis = 0;
+		$next = $depuis + $max_by_page;
 	}
 	
-	$limit = "$depuis, $max_by_page" ;
+	$limit = "$depuis, $max_by_page";
 	
 	if ($graphie) {
 		# Pas d'espace au début ou à la fin
-		$graphie = preg_replace('/^\s+/', '', $graphie) ;
-		$graphie = preg_replace('/\s+$/', '', $graphie) ;
+		$graphie = preg_replace('/^\s+/', '', $graphie);
+		$graphie = preg_replace('/\s+$/', '', $graphie);
 		$select_transcrit = '';
 		$select_langue = '';
 		
-		echo "\t\t<h2 id=\"liste\">Résultats</h2>\n" ;
+		echo "\t\t<h2 id=\"liste\">Résultats</h2>\n";
 		
 		if ($transcrit) {
-			$graphie = strtolower($graphie) ;
-			$titre = 'articles.transcrit_plat' ;
-			$r_titre = 'articles.r_transcrit_plat' ;
-			$select_transcrit = ', articles.transcrit_plat AS transcrit' ;
+			$graphie = strtolower($graphie);
+			$titre = 'a_trans_flat';
+			$r_titre = 'a_trans_flat_r';
+			$select_transcrit = ', a_trans_flat';
 		} else if ($no_diac) {
-			$titre = 'articles.titre_plat' ;
-			$r_titre = 'articles.r_titre_plat' ;
+			$titre = 'a_title_flat';
+			$r_titre = 'a_title_flat_r';
 			
 			# Enlève les diacritiques
-			$graphie = non_diacritique($graphie) ;
+			$graphie = non_diacritique($graphie);
 		} else {
-			$titre = 'articles.titre' ;
-			$r_titre = 'articles.r_titre' ;
+			$titre = 'a_title';
+			$r_titre = 'a_title_r';
 		}
 		
 		# Joker
-		$cond = joker($graphie, $titre, $r_titre) ;
+		$cond = joker($graphie, $titre, $r_titre);
 		$cond_langue = '';
 		$cond_type = '';
 
 		if ($cond) {
-			$cond_graphie = $cond ;
+			$cond_graphie = $cond;
 			if ($langue) {
-				$cond_langue = "mots.langue='$langue'" ;
+				$cond_langue = "l_lang='$langue'";
 			} else {
-				$select_langue = ", mots.langue" ;
+				$select_langue = ", l_lang";
 			}
 			if ($type) {
 				switch($type) {
 					case 'nom-tous':
-						$cond_type = "(type='nom' OR type='nom-pr')" ;
-						$select_type = ", mots.type" ;
-						break ;
+						$cond_type = "(l_type='nom' OR l_type='nom-pr')";
+						$select_type = ", l_type";
+						break;
 					default:
-						$cond_type = "(mots.type='$type')" ;
-						break ;
+						$cond_type = "(l_type='$type')";
+						break;
 				}
 			} else {
-				$select_type = ", mots.type" ;
+				$select_type = ", l_type";
 			}
 			$cond = '';
 			
 			if ($cond_graphie) {
 				if ($cond=='') {
-					$cond = $cond_graphie ;
+					$cond = $cond_graphie;
 				} else {
-					$cond .= " AND $cond_graphie" ;
+					$cond .= " AND $cond_graphie";
 				}
 			}
 			if ($cond_langue) {
 				if ($cond=='') {
-					$cond = $cond_langue ;
+					$cond = $cond_langue;
 				} else {
-					$cond .= " AND $cond_langue" ;
+					$cond .= " AND $cond_langue";
 				}
 			}
 			if ($cond_type) {
 				if ($cond=='') {
-					$cond = $cond_type ;
+					$cond = $cond_type;
 				} else {
-					$cond .= " AND $cond_type" ;
+					$cond .= " AND $cond_type";
 				}
 			}
 		
 			if (!isset($_GET['flex']) or !$_GET['flex'] or !($_GET['flex']=='oui')) {
-				$cond .= " AND NOT flex" ;
+				$cond .= " AND NOT l_is_flexion";
 			}
 			if (!isset($_GET['loc']) or !$_GET['loc'] or !($_GET['loc']=='oui')) {
-				$cond .= " AND NOT loc" ;
+				$cond .= " AND NOT l_is_locution";
 			}
 			if (!isset($_GET['gent']) or !$_GET['gent'] or !($_GET['gent']=='oui')) {
-				$cond .= " AND NOT gent" ;
+				$cond .= " AND NOT l_is_gentile";
 			}
 			if (!isset($_GET['nom_propre']) or !$_GET['nom_propre'] or !($_GET['nom_propre']=='oui')) {
-				$cond .= " AND NOT mots.type='nom-pr'" ;
+				$cond .= " AND NOT l_type='nom-pr' AND NOT l_type='prenom' AND NOT l_type='nom-fam'";
 			}
 			
 			
@@ -165,58 +169,58 @@
 				# Compte
 			
 				# Table normale
-				$requete_compte = "SELECT count(*) FROM articles LEFT JOIN mots ON articles.titre=mots.titre WHERE $cond" ;
-				echo "<!-- Compte articles : $requete_compte -->\n" ;
+				$requete_compte = "SELECT count(*) FROM entries WHERE $cond";
+				echo "<!-- Compte articles : $requete_compte -->\n";
 				
-				$message = "terme='$graphie'\tlangue='$langue'\ttype='$type'" ;
-				$resultat_compte = mysql_query($requete_compte) or die_graphie($requete_compte, $message) ;
-				$compte = mysql_fetch_array($resultat_compte) ;
-				$num = $compte[0] ;
+				$message = "terme='$graphie'\tlangue='$langue'\ttype='$type'";
+				$resultat_compte = mysql_query($requete_compte) or die_graphie($requete_compte, $message);
+				$compte = mysql_fetch_array($resultat_compte);
+				$num = $compte[0];
 				
 				# Requète
-				$requete = "SELECT articles.titre, mots.pron, mots.flex, mots.loc, mots.num $select_type $select_langue $select_transcrit FROM articles LEFT JOIN mots ON articles.titre=mots.titre WHERE $cond ORDER BY mots.titre LIMIT $limit" ;
-				echo "<!-- Requète articles : $requete -->\n" ;
+				$requete = "SELECT a_title, p_pron, l_is_flexion, l_is_locution, l_num, p_num $select_type $select_langue $select_transcrit FROM entries WHERE $cond ORDER BY a_title_flat, a_title, l_lang, l_type, l_num, p_num LIMIT $limit";
+				echo "<!-- Requète articles : $requete -->\n";
 			
 				if ($num == 0 ) {
-					echo "<p>Pas de graphies trouvées pour «&nbsp;$graphie&nbsp;»" ;
-					if ($cond_type != '') { echo " de type $type" ; }
-					if ($cond_langue != '') { echo " en $langues[$langue]" ; }
-					echo ".</p>\n" ;
+					echo "<p>Pas de graphies trouvées pour «&nbsp;$graphie&nbsp;»";
+					if ($cond_type != '') { echo " de type $type"; }
+					if ($cond_langue != '') { echo " en $langues[$langue]"; }
+					echo ".</p>\n";
 				} else {
 					# Nettoie
-					if ($type=='' or $type=='nom') { $cond_type='' ; }
+					if ($type=='' or $type=='nom') { $cond_type=''; }
 				
-					$message = "terme='$graphie'\tlangue='$langue'\ttype='$type'\tnum='$num'" ;
-					$resultat = mysql_query($requete) or die_graphie($message, $requete) ;
+					$message = "terme='$graphie'\tlangue='$langue'\ttype='$type'\tnum='$num'";
+					$resultat = mysql_query($requete) or die_graphie($message, $requete);
 					
-					echo "<p>$num graphies trouvées pour « $graphie »" ;
-					if ($cond_type != '') { echo " de type $type" ; }
-					if ($cond_langue != '') { echo " en $langues[$langue]" ; }
-					echo "&nbsp;:</p>\n" ;
+					echo "<p>$num graphies trouvées pour « $graphie »";
+					if ($cond_type != '') { echo " de type $type"; }
+					if ($cond_langue != '') { echo " en $langues[$langue]"; }
+					echo "&nbsp;:</p>\n";
 					
-					$navigation_string = '';	
+					$navigation_string = '';
 					if ($num >= $max_by_page and $depuis+ $max_by_page < $num) {
 						# More pages than thought: navigation through the results
-						$target = $_SERVER['SCRIPT_NAME'] ;
+						$target = $_SERVER['SCRIPT_NAME'];
 					
-						$n=0 ;
-						$_GET['depuis'] = $depuis + $max_by_page ;
+						$n=0;
+						$_GET['depuis'] = $depuis + $max_by_page;
 						foreach ($_GET as $key => $value) {
 							if ($value) {
 								if ($n==0) {
-									$target .= '?' . $key . '=' . $value ;
+									$target .= '?' . $key . '=' . $value;
 								} else {
-									$target .= '&amp;' . $key . '=' . $value ;
+									$target .= '&amp;' . $key . '=' . $value;
 								}
 							}
-							$n++ ;
+							$n++;
 						}
-						$suite = $depuis+1 + $max_by_page ;
-						$actuel = "(".($depuis+1)." - $suite) " ;
-						$navigation_string = "<p>$actuel <a href=\"$target#liste\">$max_by_page résultats suivants</a></p>" ;
+						$suite = $depuis+1 + $max_by_page;
+						$actuel = "(".($depuis+1)." - $suite) ";
+						$navigation_string = "<p>$actuel <a href=\"$target#liste\">$max_by_page résultats suivants</a></p>";
 					}
 				
-					$titre_wiki = '' ;
+					$titre_wiki = '';
 					$option = array(
 					"titre"		=> $titre_wiki,
 					'langue'	=> $langue,
@@ -224,24 +228,24 @@
 					'transcrit' => $transcrit
 					);
 				
-					echo $navigation_string ;
-					affiche_liste($liste, $resultat, $option) ;
-					echo $navigation_string ;
-					echo "<p class=\"NB\">NB&nbsp;: cliquez sur la prononciation pour accéder à la page <a href=\"rimes.php\">de recherche avancée</a> (afin de trouver des rimes pour ce mot par exemple).</p>" ;
+					echo $navigation_string;
+					affiche_liste($liste, $resultat, $option);
+					echo $navigation_string;
+					echo "<p class=\"NB\">NB&nbsp;: cliquez sur la prononciation pour accéder à la page <a href=\"rimes.php\">de recherche avancée</a> (afin de trouver des rimes pour ce mot par exemple).</p>";
 
 				}
 				
 				#############
 				# LOG
-				$message = "'$graphie'\t$langue\t$num" ;
-				log_action('graphies', $message, $requete) ;
+				$message = "'$graphie'\t$langue\t$num";
+				//log_action('graphies', $message, $requete);
 				#############
 			
 				mysql_close();
 			}
 		}
 		if ($depuis == 0) {
-			unset($_GET['depuis']) ;
+			unset($_GET['depuis']);
 		}
 	}
 ?>

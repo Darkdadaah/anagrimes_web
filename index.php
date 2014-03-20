@@ -13,10 +13,10 @@
 		<?php require ("part_avertissement.php"); ?>
 		<ul>
 			<li><a href="chercher_anagrammes.php">Recherche d'anagrammes</a></li>
-			<li><a href="chercher_rimes.php">Recherche de rimes</a></li>
-			<li><a href="chercher_prononciation.php">Recherche avancée de prononciation</a></li>
-			<li><a href="chercher_graphie.php">Recherche avancée de graphies</a></li>
-			<li><a href="chercher_transcription.php">Recherche par transcription</a></li>
+			<!--<li><a href="chercher_rimes.php">Recherche de rimes</a></li>-->
+			<li><a href="chercher_prononciation.php">Recherche par prononciation</a></li>
+			<li><a href="chercher_graphie.php">Recherche par graphies</a></li>
+			<!--<li><a href="chercher_transcription.php">Recherche par transcription</a></li>-->
 		</ul>
 		<h1>Liens</h1>
 		<ul>

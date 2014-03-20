@@ -21,12 +21,11 @@
 			<li><a href="chercher_graphie.php?graphie=clair*&langue=fr">clair*</a> <small>(tous les mots commençant par « clair »)</small></li>
 			<li><a href="chercher_graphie.php?graphie=*clair&langue=fr">*clair</a> <small>(tous les mots finissant par « clair »)</small></li>
 			<li><a href="chercher_graphie.php?graphie=clair*ance&langue=fr">clair*ance</a> <small>(tous les mots commençant par « clair » et finissant par « ance »)</small></li>
+			<li><a href="chercher_graphie.php?graphie=*clair*&langue=fr">*clair*</a> <small>(tous les mots contenant « clair ») ATTENTION : cette recherche est plus longue que les autres (pas d'optimisation pour les recherches en plein mot).</small></li>
 		</ul>
 		<p>Il s'utilise ainsi&nbsp;:</p>
 		<ul>
 			<li>Elle représente de 0 à plusieurs lettres&nbsp;;</li>
-			<li>Elle peut être placée en début, en fin ou au milieu d'un terme recherché&nbsp;;</li>
-			<li>Un seul joker peut être utilisé à la fois.</li>
 		</ul>
 		
 		<h3>Point d'interrogation</h3>

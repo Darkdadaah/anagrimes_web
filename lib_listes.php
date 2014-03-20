@@ -59,12 +59,27 @@
 		'nom-fam' => 'nom de famille',
 		'verb' => 'verbe',
 		'adv' => 'adverbe',
-		'adjectif' => 'adjectif',
+		'adj' => 'adjectif',
 		'adj-num' => 'adjectif numéral',
 		'conj' => 'conjonction',
 		'interj' => 'interjection',
 		'prép' => 'préposition',
 		'prov' => 'proverbe',
-		'prénom' => 'prénom',
+		'prenom' => 'prénom',
+		'verb' => 'verbe',
+	);
+
+	$pron_places = array(
+		'fin' => 'Rime (fin de mot)',
+		'debut' => 'Début de prononciation',
+		'exact' => 'Prononciation exacte',
+		'milieu' => 'Milieu de mot (long)',
+		'partout' => 'N\'importe où (long)',
+	);
+
+	$listes_names = array(
+		'table' => 'Tableau détaillé',
+		'wiki' => 'Liste wiki',
+		'simple' => 'Liste simple',
 	);
 ?>

@@ -27,6 +27,7 @@
 			</p>
 			<? langues(isset($_GET['langue']) ? $_GET['langue'] : ''); ?>
 			<? types(isset($_GET['type']) ? $_GET['type'] : ''); ?>
+			<? listes(isset($_GET['liste']) ? $_GET['liste'] : ''); ?>
 			<ul>
 			<li><? flexions(true); ?></li>
 			<li><? locutions(false); ?></li>
@@ -34,130 +35,129 @@
                         <li><? nom_propre(true); ?></li>
 			</ul>
 		</fieldset>
-		<? listes(isset($_GET['liste']) ? $_GET['liste'] : ''); ?>
 		<input type="submit" value="lancer la recherche" />
 	</fieldset>
 	</form>
-	<script>var focusHere = document.getElementById('mot') ; focusHere = focusHere.focus();</script>
+	<script>var focusHere = document.getElementById('mot'); focusHere = focusHere.focus();</script>
 <?php
 	require('lib_database.php');
 
-	dbconnect() ;
+	dbconnect();
 	
-	$mot = mysql_real_escape_string(isset($_GET['mot']) ? $_GET['mot'] : '') ;
-	$liste = mysql_real_escape_string(isset($_GET['liste']) ? $_GET['liste'] : '') ;
-	$langue = mysql_real_escape_string(isset($_GET['langue']) ? $_GET['langue'] : '') ;
-	$type = mysql_real_escape_string(isset($_GET['type']) ? $_GET['type'] : '') ;
+	$mot = mysql_real_escape_string(isset($_GET['mot']) ? $_GET['mot'] : null);
+	$liste = mysql_real_escape_string(isset($_GET['liste']) ? $_GET['liste'] : null);
+	$langue = mysql_real_escape_string(isset($_GET['langue']) ? $_GET['langue'] : null);
+	$type = mysql_real_escape_string(isset($_GET['type']) ? $_GET['type'] : null);
+	if ($type == '') { $type = null; }
+	if ($langue == '') { $langue = null; }
 	
-	$limit = 200 ;
+	$limit = 200;
 	
 	if ($mot) {
 		if (strlen(utf8_decode($mot)) < 3) {
-			echo "<p>Merci de taper plus de caractères pour cette recherche (il faut au moins 3 lettres pour faire un anagramme).</p>\n" ;
+			echo "<p>Merci de taper plus de caractères pour cette recherche (il faut au moins 3 lettres pour faire un anagramme).</p>\n";
 		} else {
 	
-			echo "\t\t<h2 id=\"liste\"> Résultats</h2>\n" ;
+			echo "\t\t<h2 id=\"liste\"> Résultats</h2>\n";
 	
-			$anag = non_diacritique($mot) ;
+			$anag = non_diacritique($mot);
 			
 			$lettres = preg_split('//', $anag, -1, PREG_SPLIT_NO_EMPTY);
-			sort($lettres) ;
-			$anag = join(' ', $lettres) ;
-			$anag = ereg_replace(' ', '', $anag) ;
+			sort($lettres);
+			$anag = join(' ', $lettres);
+			$anag = ereg_replace(' ', '', $anag);
 			
-			$cond = "articles.anagramme_id='$anag'" ;
+			$cond = "a_alphagram='$anag'";
 			$cond_langue = '';
 			$cond_type = '';
 			$select_langue = '';
 			$select_type = '';
 			
 			if ($langue) {
-				$cond_langue = "mots.langue='$langue'" ;
+				$cond_langue = "l_lang='$langue'";
 			} else {
-				$select_langue = ", mots.langue" ;
+				$select_langue = ", l_lang";
 			}
 			
 			if ($type) {
 				switch($type) {
 					case 'nom-tous':
-						$cond_type = "(mots.type='nom' OR mots.type='nom-pr')" ;
-						$select_type = ", mots.type" ;
-						break ;
+						$cond_type = "(l_type='nom' OR l_type='nom-pr')";
+						$select_type = ", l_type";
+						break;
 					default:
-						$cond_type = "mots.type='$type'" ;
-						break ;
+						$cond_type = "l_type='$type'";
+						break;
 				}
 			} else {
-				$select_type = ", mots.type" ;
+				$select_type = ", l_type";
 			}
 			
-			if ($cond_langue) { $cond .= " AND $cond_langue" ; }
-			if ($cond_type) { $cond .= " AND $cond_type" ; }
+			if ($cond_langue) { $cond .= " AND $cond_langue"; }
+			if ($cond_type) { $cond .= " AND $cond_type"; }
 
-                        if (!$_GET['flex'] or !($_GET['flex']=='oui')) {
-                                $cond .= " AND NOT flex" ;
+                        if (!isset($_GET['flex']) or !($_GET['flex']=='oui')) {
+                                $cond .= " AND NOT l_is_flexion";
                         }
-                        if (!$_GET['loc'] or !($_GET['loc']=='oui')) {
-                                $cond .= " AND NOT loc" ;
+                        if (!isset($_GET['loc']) or !($_GET['loc']=='oui')) {
+                                $cond .= " AND NOT l_is_locution";
                         }
-                        if (!$_GET['gent'] or !($_GET['gent']=='oui')) {
-                                $cond .= " AND NOT gent" ;
+                        if (!isset($_GET['gent']) or !($_GET['gent']=='oui')) {
+                                $cond .= " AND NOT l_is_gentile";
                         }
-                        if (!$_GET['nom_propre'] or !($_GET['nom_propre']=='oui')) {
-                                $cond .= " AND NOT mots.type='nom-pr'" ;
+                        if (!isset($_GET['nom_propre']) or !($_GET['nom_propre']=='oui')) {
+                                $cond .= " AND NOT l_type='nom-pr' AND NOT l_type='prenom' AND NOT l_type='nom-fam'";
 			}
 			
-			$cond .= " AND NOT articles.titre='$mot'" ;
+			$cond .= " AND NOT a_title='$mot'";
 		
 			if ($cond) {
 				# Compte
-				$requete_compte = "SELECT count(*) FROM articles LEFT JOIN mots ON articles.titre=mots.titre WHERE $cond" ;
-				echo "<!-- Requète : $requete_compte -->\n" ;
+				$requete_compte = "SELECT count(*) FROM entries WHERE $cond";
+				echo "<!-- Requète : $requete_compte -->\n";
 				$resultat_compte = mysql_query($requete_compte) or die("Query failed");
-				$compte = mysql_fetch_array($resultat_compte) ;
-				$num = $compte[0] ;
+				$compte = mysql_fetch_array($resultat_compte);
+				$num = $compte[0];
 				$requete = '';
 				
-				if ($num==0 or ($num == 1 and $datatemp->titre==$mot) ) {
-						echo "<p>Pas d'anagrammes trouvées pour <a href=\"//fr.wiktionary.org/wiki/$mot\">$mot</a> (autre que lui même).</p>" ;
+				if ($num==0) {
+						echo "<p>Pas d'anagrammes trouvées pour <a href=\"//fr.wiktionary.org/wiki/$mot\">$mot</a> (autre que lui même).</p>";
 				} else {
 					# Requète
-					$requete = "SELECT articles.titre, mots.pron, mots.flex, mots.loc, mots.num $select_type $select_langue FROM articles LEFT JOIN mots ON articles.titre=mots.titre WHERE $cond ORDER BY articles.titre LIMIT $limit" ;
-					echo "<!-- Requète : $requete -->\n" ;
+					$requete = "SELECT a_title, l_is_flexion, l_is_locution, l_num, p_pron $select_type $select_langue FROM entries WHERE $cond ORDER BY a_title_flat, a_title, l_lang, l_type, l_num, p_num LIMIT $limit";
+					echo "<!-- Requète : $requete -->\n";
 				
 					$resultat = mysql_query($requete) or die("Query failed");
 				
-					$en_langue = '' ;
+					$en_langue = '';
 					if ($langue) {
-						$en_langue = " en $langues[$langue]" ;
+						$en_langue = " en $langues[$langue]";
 					} else {
-						$en_langue = " en toutes langues" ;
+						$en_langue = " en toutes langues";
 					}
 					
 					if ($num > $limit) {
-						echo "<p>Plus de $limit résultats : seuls les $limit premiers résultats sont affichés</p>" ;
+						echo "<p>Plus de $limit résultats : seuls les $limit premiers résultats sont affichés</p>";
 					}
 					if ($num==1) {
-						echo "<p>1 anagramme trouvée pour <a href=\"//fr.wiktionary.org/wiki/$mot\">$mot</a>$en_langue&nbsp;:</p>\n" ;
+						echo "<p>1 anagramme trouvée pour <a href=\"//fr.wiktionary.org/wiki/$mot\">$mot</a>$en_langue&nbsp;:</p>\n";
 					} else {
-						echo "<p>$num anagrammes trouvées pour <a href=\"//fr.wiktionary.org/wiki/$mot\">$mot</a>$en_langue&nbsp;:</p>\n" ;
+						echo "<p>$num anagrammes trouvées pour <a href=\"//fr.wiktionary.org/wiki/$mot\">$mot</a>$en_langue&nbsp;:</p>\n";
 					}
-					$titre_wiki = '{{-anagr-}}' ;
+					$titre_wiki = '=== {{S|anagrammes}} ===';
 					$option = array("titre" => $titre_wiki, 'langue' => $langue, 'type' => $type);
 				
-					echo $navigation_string ;
-					affiche_liste($liste, $resultat, $option) ;
-					echo $navigation_string ;
+					affiche_liste($liste, $resultat, $option);
 					
-					echo "<p id='alphagramme'>Alphagramme&nbsp;: $anag</p>" ;
+					echo "<p id='alphagramme'>Alphagramme&nbsp;: $anag</p>";
 				}
-			
+				
 				#############
 				# LOG
-				$message = "'$mot'\tlangue='$langue'\tnum='$num'" ;
-				log_action('anagrammes', $message, $requete) ;
+				$message = "'$mot'\tlangue='$langue'\tnum='$num'";
+				//log_action('anagrammes', $message, $requete);
 				#############
-				mysql_close() ;
+				mysql_close();
 			}
 		}
 	}
