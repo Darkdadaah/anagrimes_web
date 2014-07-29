@@ -14,7 +14,7 @@ function dbconnect() {
         $password = $mycnf['password'];
         unset($mycnf);
 	$hostname = 'tools-db';
-	$dbname = $username . '__anagrimes2';
+	$dbname = $username . '__anagrimes2b';
 	//echo "CONNECTION...\n";
         $db['connected'] = mysql_connect($hostname, $username, $password) 
                 or print '<p class="fail"><strong>Database server login failed.</strong> '
