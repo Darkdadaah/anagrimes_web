@@ -16,6 +16,7 @@
 			<!--<li><a href="chercher_rimes.php">Recherche de rimes</a></li>-->
 			<li><a href="chercher_prononciation.php">Recherche par prononciation</a></li>
 			<li><a href="chercher_graphie.php">Recherche par graphies</a></li>
+			<li><a href="quiz_def.php">Quiz des définitions du Wiktionnaire</a></li>
 			<!--<li><a href="chercher_transcription.php">Recherche par transcription</a></li>-->
 		</ul>
 		<h1>Liens</h1>
