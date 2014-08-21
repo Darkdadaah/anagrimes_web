@@ -15,6 +15,7 @@
 	count_ok = 0;
 	count_skip = 0;
 	count_bad = 0;
+	var cached_defs = [];
 	
 	function wikt_link(mot) {
 		return '<a href="' + witk_url + encodeURIComponent(mot) + '">' + mot + '</a>';
@@ -50,10 +51,45 @@
 		$('#type').text('');
 		answered = false;
 		solution = '';
-		$.getJSON(def_url, display_defs);
+		console.log(def_url);
+		display();
+	}
+	
+	function display() {
+		var ndefs = cached_defs.length;
+		console.log(['Number of defs:', ndefs]);
+		// No definition? Init and display the first
+		if (ndefs == 0) {
+			console.log('Init defs');
+			$.getJSON(def_url, get_and_display);
+		}
+		// Retrieve some in the background until we have more than 10
+		else if (ndefs < 10) {
+			console.log('Retrieve new defs in the background');
+			display_defs(cached_defs.shift());
+			$.getJSON(def_url, get_cached);
+		}
+		// Otherwise: just display the next def
+		else 
+			console.log('Display next def');{
+			display_defs(cached_defs.shift());
+		}
+	}
+	
+	function get_and_display(data) {
+		cached_defs = cached_defs.concat(data);
+		console.log(['New defs:', cached_defs.length]);
+		var next = cached_defs.shift();
+		display_defs(next);
+	}
+	function get_cached(data) {
+		cached_defs = cached_defs.concat(data);
 	}
 	
 	function display_defs(data) {
+		if (!data) {
+			return;
+		}
 		type = data[0]['loc'] == 1 ? 'loc-' + data[0]['type'] : data[0]['type'];
 		$('#type').text('(' + type + ')');
 		solution = data[0]['title'];
