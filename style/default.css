@@ -31,13 +31,15 @@ body {
 	padding-top : 0.5em;
 	padding-bottom : 0.2em;
 	margin-bottom:0;
-	margin-top:1em;
+	margin-top:3em;
 	border-top : 1px solid #ddf ;
 	background-color : #fff;
+	color: gray;
 }
 
 .piedpage a {
 	text-decoration: none;
+	color: gray;
 }
 
 .avertissement {
@@ -109,4 +111,75 @@ table a {
 
 .NB {
 	font-size : 0.8em ;
+}
+
+#type {
+
+}
+
+#defs {
+    /*font-size: 1.5em;*/
+    margin: 0 auto;
+    margin-bottom: 1em;
+    margin-top: 1em;
+    display: block;
+    max-width: 40em;
+}
+
+#answer {
+    display: block;
+    border: 1px solid #AAA;
+    /*max-width: 40em;*/
+    text-align: center;
+    padding: 1em;
+    /*font-size: 1.5em;*/
+    margin: 0 auto;
+    margin-bottom: 1em;
+    margin-top: 1em;
+}
+
+#answerbox, #solution {
+    display: block;
+    border: 1px solid #AAA;
+    max-width: 40em;
+    text-align: center;
+    padding: 1em;
+    /*font-size: 2em;*/
+    margin: 0 auto;
+    margin-bottom: 1em;
+    margin-top: 1em;
+}
+
+.bouton {
+	display: inline-block;
+	border: 1px solid #AAF;
+	padding: 0.5em;
+	background: #DDF;
+	color: #00A;
+	margin-left: 1em;
+	margin-right: 1em;
+	cursor: pointer;
+}
+
+.clicked_button {
+	color: gray;
+	background: #EEE;
+	border: 1px solid #AAA;
+	cursor: default;
+}
+
+#buttons {
+    margin: 0 auto;
+    margin-bottom: 1em;
+    margin-top: 1em;
+    width: auto;
+    text-align: center;
+}
+
+#qresults {
+    margin: 0 auto;
+    margin-top: 2em;
+    margin-top: 1em;
+    max-width: 40em;
+    font-size: 0.8em;
 }
