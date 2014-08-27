@@ -6,7 +6,7 @@
 	
 	# Redirect to a random word url
 	$num = 5;
-	$defs = get_random_def(isset($_GET['langue']) ? $_GET['langue'] : NULL, $num);
+	$defs = get_random_def(isset($_GET['lang']) ? $_GET['lang'] : NULL, $num);
 	mysql_close();
 	echo json_encode($defs);
 ?>
