@@ -117,13 +117,30 @@ table a {
 
 }
 
+#waiting {
+	margin: 0 auto;
+	text-align: center;
+}
+
+#boite {
+	text-align: left;
+	max-width: 40em;
+	margin:  auto;
+	margin-top: 1em;
+	padding: 1em;
+	border: 1px solid #aaa;
+}
+
+#description:first-letter {
+    text-transform:capitalize;
+}
+
 #defs {
     /*font-size: 1.5em;*/
     margin: 0 auto;
     margin-bottom: 1em;
     margin-top: 1em;
     display: block;
-    max-width: 40em;
 }
 
 #answer {
@@ -179,7 +196,7 @@ table a {
 #qresults {
     margin: 0 auto;
     margin-top: 2em;
-    margin-top: 1em;
     max-width: 40em;
     font-size: 0.8em;
 }
+
