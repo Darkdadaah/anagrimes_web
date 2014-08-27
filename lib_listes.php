@@ -61,6 +61,7 @@
 		'adv' => 'adverbe',
 		'adj' => 'adjectif',
 		'adj-num' => 'adjectif numéral',
+		'adv' => 'adverbe',
 		'conj' => 'conjonction',
 		'interj' => 'interjection',
 		'prép' => 'préposition',
