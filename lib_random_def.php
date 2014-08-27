@@ -12,12 +12,13 @@ function get_random_def($lang, $num) {
 	}
 	
 	# Get a random id
+	$limit = 30;
 	$all_defs = array();
 	for ($n = 0; $n <= $num; $n++) {
 		$rand = get_random_id($langue);
 		
 		# Get the random defs
-		$requete = "SELECT a_title, l_type, l_is_locution, l_num, d_def, l_lexid FROM articles LEFT JOIN lexemes ON a_artid=l_artid LEFT JOIN prons ON l_lexid=p_lexid LEFT JOIN defs ON l_lexid=d_lexid WHERE l_lang='$langue' AND l_rand=$rand ORDER BY d_num";
+		$requete = "SELECT a_title, l_type, l_is_locution, d_num, d_def, d_defid FROM lexemes INNER JOIN articles ON l_artid=a_artid INNER JOIN defs ON l_lexid=d_lexid WHERE l_lang='$langue' AND l_rand=$rand AND d_def IS NOT NULL GROUP BY d_defid, d_num ORDER BY d_num";
 		$result = mysql_query($requete);
 		$defs = array();
 		while ($row = mysql_fetch_array($result, MYSQL_NUM)) {
@@ -27,7 +28,18 @@ function get_random_def($lang, $num) {
 			$def['loc'] = $row[2];
 			$def['num'] = $row[3];
 			$def['def'] = $row[4];
-			$defs[] = $def;
+			$def['defid'] = $row[5];
+			if ($row[5] != '') {
+				$defs[] = $def;
+			} else {
+				if ($limit > 0) {
+					$n--;
+					$limit--;
+					continue;
+				} else {
+					break;
+				}
+			}
 		}
 		$all_defs[] = $defs;
 	}
