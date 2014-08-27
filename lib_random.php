@@ -1,5 +1,7 @@
 <?php
 
+$max = array();
+
 # Retrieve an id for a random word
 function get_random_id($langue) {
 	# Français par défaut
@@ -7,12 +9,13 @@ function get_random_id($langue) {
 		$langue = 'fr';
 	}
 	
-	$query = "SELECT lg_num_min FROM langs WHERE lg_lang='$langue'";
+	if (!$max[$langue]) {
+		$query = "SELECT lg_num_min FROM langs WHERE lg_lang='$langue'";
+		$result = mysql_query($query);
+		$max[$langue] = mysql_result($result, 0);
+	}
 	
-	$result = mysql_query($query);
-	$max = mysql_result($result, 0);
-	
-	return rand(1, $max);
+	return rand(1, $max[$langue]);
 }
 
 # Returns a random word (mot), url-friendly (raw) and anchor (ancre)
