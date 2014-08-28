@@ -4,12 +4,14 @@ $max = array();
 
 # Retrieve an id for a random word
 function get_random_id($langue) {
+	global $max;
+
 	# Français par défaut
 	if (!$langue) {
 		$langue = 'fr';
 	}
 	
-	if (!$max[$langue]) {
+	if (!array_key_exists($langue, $max)) {
 		$query = "SELECT lg_num_min FROM langs WHERE lg_lang='$langue'";
 		$result = mysql_query($query);
 		$max[$langue] = mysql_result($result, 0);
