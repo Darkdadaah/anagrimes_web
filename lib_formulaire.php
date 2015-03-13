@@ -1,8 +1,25 @@
 <?php
 	//ini_set('log_errors',1);
 	//ini_set('error_log','/home/darkdadaah/logs/php.txt');
-	require('lib_listes.php');
-	require('lib_chaines.php');
+	require_once('lib_listes.php');
+	require_once('php/lib_chaines.php');
+	
+	function menu($var, $name, $all_names) {
+		global $types;
+		print '<select id="'.$name.'" name="'.$name.'">'."\n";
+		print "\t<option value=\"\"";
+		if (!isset($_GET[ $name ])) { print " selected=\"selected\""; }
+		print ">" . $all_names . "</option>\n";
+		
+		$var_names = array_keys( $var );
+		while ($title = array_shift( $var_names )) {
+			$label = ucfirst( $var[$title] );
+			print "\t<option value=\"$title\"";
+			if (isset($_GET[ $name ]) and $_GET[ $name ] == $title) { print " selected=\"selected\""; }
+			print ">$label</option>\n";
+		}
+		print '</select>'."\n";
+	}
 	
 	function langues() {
 		global $langues;
@@ -23,6 +40,16 @@
 	
 	function types() {
 		global $types;
+		menu($types, 'type', 'Tous types');
+	}
+
+	function genres() {
+		global $genres;
+		menu($genres, 'genre', 'Tous genres');
+	}
+/*	
+	function types() {
+		global $types;
 		print '<select id="type" name="type">'."\n";
 		print "\t<option value=\"\"";
 		if (!isset($_GET['type'])) { print " selected=\"selected\""; }
@@ -37,7 +64,7 @@
 		}
 		print '</select>'."\n";
 	}
-	
+*/	
 	function flexions($check) {
 		print_checkbox('flex', 'oui', 'Inclure les flexions <small>(conjugaisons, accords, déclinaisons)</small>', $check);
 	}
@@ -210,7 +237,7 @@
 	}
 	
 	function affiche_table($resultat, $option) {
-		global $langues, $types;
+		global $langues, $types, $genres;
 		print "<table class=\"ortho-list\">\n";
 			print "<tr>\n";
 			print "\t<th>Titre</th>\n";
@@ -270,6 +297,12 @@
 				$type_label = isset($types[$ligne['l_type']]) ? ucfirst($types[$ligne['l_type']]) : $ligne['l_type'];
 				if (isset($ligne['l_num']) and $ligne['l_num'] > 1) { $type_label = $type_label . ' ' . $ligne['l_num']; }
 				if (isset($ligne['l_is_flexion']) and $ligne['l_is_flexion']==1) { $type_label = $type_label . ' (flexion)'; }
+				if (!isset($option['genre']) and !isset($option['no_genre']) and isset($ligne['l_genre'])) {
+					$genre_label = isset($genres[$ligne['l_genre']]) ? $genres[$ligne['l_genre']] : $ligne['l_genre'];
+					if ($genre_label != '') {
+						$type_label = $type_label . ", " . $genre_label;
+					}
+				}
 				print "\t<td>$type_label</td>\n";
 			}
 			print "</tr>\n";
