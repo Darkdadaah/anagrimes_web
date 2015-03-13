@@ -16,7 +16,7 @@
 	<?php require ("part_retour.php"); ?>
 	<?php require ("lib_formulaire.php"); ?>
 	
-	<form class="formulaire" action="<?=$_SERVER['SCRIPT_NAME']?>#liste" method="get">
+	<form class="formulaire" action="<?php echo $_SERVER['SCRIPT_NAME'] ?>#liste" method="get">
 	<fieldset>
 		<legend>Options de recherche</legend>
 		<fieldset>
@@ -28,11 +28,11 @@
 				echo "\" />" ;
 				?></label><input type="submit" value="Lancer la recherche" /><input type="button" onclick="form.transc.value=''" value="Effacer" /><span><small>Vous pouvez <a href="aide.php">utiliser un joker</a> pour affiner la recherche.</small></span>
 			</p>
-			<? langues($_GET['langue']); ?>
+			<?php langues($_GET['langue']); ?>
 			<ul>
 			</ul>
 		</fieldset>
-		<? listes($GET_['liste']); ?>
+		<?php listes($GET_['liste']); ?>
 	
 	<input type="submit" value="Lancer la recherche" />
 	</fieldset>

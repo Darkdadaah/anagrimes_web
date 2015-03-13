@@ -16,7 +16,7 @@
 	<?php require ("part_retour.php"); ?>
 	<?php require ("lib_formulaire.php"); ?>
 	
-	<form class="formulaire" action="<?=$_SERVER['SCRIPT_NAME']?>#liste" method="get">
+	<form class="formulaire" action="<?php echo $_SERVER['SCRIPT_NAME'] ?>#liste" method="get">
 	<fieldset>
 		<legend>Options de recherche</legend>
 		<fieldset>
@@ -28,19 +28,20 @@
 				echo "\" />";
 				?></label><input type="submit" value="Lancer la recherche" /><input type="button" onclick="form.graphie.value=''" value="Effacer" />
 			</p>
-			<? langues(isset($_GET['langue']) ? $_GET['langue'] : NULL); ?>
-			<? types(isset($_GET['type']) ? $_GET['type'] : NULL); ?>
-			<? listes(isset($_GET['liste']) ? $_GET['liste'] : NULL); ?>
+			<?php langues(isset($_GET['langue']) ? $_GET['langue'] : NULL); ?>
+			<?php types(isset($_GET['type']) ? $_GET['type'] : NULL); ?>
+			<?php genres(isset($_GET['genre']) ? $_GET['genre'] : NULL); ?>
+			<?php listes(isset($_GET['liste']) ? $_GET['liste'] : NULL); ?>
 			<ul>
-			<li><? flexions(false); ?></li>
-			<li><? locutions(false); ?></li>
-			<li><? gentiles(false); ?></li>
-			<li><? nom_propre(false); ?></li>
+			<li><?php flexions(false); ?></li>
+			<li><?php locutions(false); ?></li>
+			<li><?php gentiles(false); ?></li>
+			<li><?php nom_propre(false); ?></li>
 			<li><input type="checkbox" value="OK" name="no_diac" id="diacbox" <?php if (isset($_GET['no_diac'])) { echo ' checked="checked"'; } ?> /><label for="diacbox">&nbsp;Ne pas prendre en compte les diacritiques (accents) et les majuscules&nbsp;?</label></li>
 			<li><input type="checkbox" value="OK" name="transcrit" id="transcriptbox" <?php if (isset($_GET['transcrit'])) { echo ' checked="checked"'; } ?> /><label for="transcritbox">&nbsp;Rechercher par transcriptions/translittérations (approximatives)</label></li>
 			</ul>
 		</fieldset>
-		<? listes(isset($_GET['liste']) ? $_GET['liste'] : NULL); ?>
+		<?php listes(isset($_GET['liste']) ? $_GET['liste'] : NULL); ?>
 	
 	<input type="submit" value="Lancer la recherche" />
 	</fieldset>
@@ -63,6 +64,7 @@
 	$transcrit = isset($_GET['transcrit']) ? mysql_real_escape_string($_GET['transcrit']) : null;
 	$langue = isset($_GET['langue']) ? mysql_real_escape_string($_GET['langue']) : null;
 	$type = isset($_GET['type']) ? mysql_real_escape_string($_GET['type']) : null;
+	$genre = isset($_GET['genre']) ? mysql_real_escape_string($_GET['genre']) : null;
 	$depuis = isset($_GET['depuis']) ? mysql_real_escape_string($_GET['depuis']) : null;
 
 	if ($type == '') { $type = NULL; }
@@ -106,6 +108,7 @@
 		$cond = joker($graphie, $titre, $r_titre);
 		$cond_langue = '';
 		$cond_type = '';
+		$cond_genre = '';
 
 		if ($cond) {
 			$cond_graphie = $cond;
@@ -126,6 +129,11 @@
 				}
 			} else {
 				$select_type = ", l_type";
+			}
+			if ($genre) {
+				$cond_genre = "l_genre='$genre'";
+			} else {
+				$select_genre = ", l_genre";
 			}
 			$cond = '';
 			
@@ -148,6 +156,13 @@
 					$cond = $cond_type;
 				} else {
 					$cond .= " AND $cond_type";
+				}
+			}
+			if ($cond_genre) {
+				if ($cond=='') {
+					$cond = $cond_genre;
+				} else {
+					$cond .= " AND $cond_genre";
 				}
 			}
 		
@@ -178,7 +193,7 @@
 				$num = $compte[0];
 				
 				# Requète
-				$requete = "SELECT a_title, p_pron, l_is_flexion, l_is_locution, l_num, p_num $select_type $select_langue $select_transcrit FROM entries WHERE $cond ORDER BY a_title_flat, a_title, l_lang, l_type, l_num, p_num LIMIT $limit";
+				$requete = "SELECT a_title, p_pron, l_is_flexion, l_is_locution, l_num, p_num $select_type $select_genre $select_langue $select_transcrit FROM entries WHERE $cond ORDER BY a_title_flat, a_title, l_lang, l_type, l_num, p_num LIMIT $limit";
 				echo "<!-- Requète articles : $requete -->\n";
 			
 				if ($num == 0 ) {

@@ -16,23 +16,23 @@
 	<?php require ("part_retour.php"); ?>
 	<?php require ("lib_formulaire.php"); ?>
 	
-	<form class="formulaire" id="formulaire" action="<?=$_SERVER['SCRIPT_NAME']?>#liste" method="get">
+	<form class="formulaire" id="formulaire" action="<?php  echo $_SERVER['SCRIPT_NAME'] ?>#liste" method="get">
 	<fieldset>
 		<legend>Options de recherche</legend>
 		<fieldset>
 			<p>Note&nbsp;: évitez les caractères trop exotiques...</p>
 			<p>
-				<label for="mot">Mot à chercher&nbsp;:&nbsp;<input type="text" name="mot" id="mot"  value="<?
+				<label for="mot">Mot à chercher&nbsp;:&nbsp;<input type="text" name="mot" id="mot"  value="<?php
 				if (isset($_GET['mot'])) { echo $_GET['mot']; } ?>" /></label><input type="submit" value="Lancer la recherche" /><input type="button" onclick="form.mot.value=''" value="Effacer" />
 			</p>
-			<? langues(isset($_GET['langue']) ? $_GET['langue'] : ''); ?>
-			<? types(isset($_GET['type']) ? $_GET['type'] : ''); ?>
-			<? listes(isset($_GET['liste']) ? $_GET['liste'] : ''); ?>
+			<?php langues(isset($_GET['langue']) ? $_GET['langue'] : ''); ?>
+			<?php types(isset($_GET['type']) ? $_GET['type'] : ''); ?>
+			<?php listes(isset($_GET['liste']) ? $_GET['liste'] : ''); ?>
 			<ul>
-			<li><? flexions(true); ?></li>
-			<li><? locutions(false); ?></li>
-                        <li><? gentiles(true); ?></li>
-                        <li><? nom_propre(true); ?></li>
+			<li><?php flexions(true); ?></li>
+			<li><?php locutions(false); ?></li>
+                        <li><?php gentiles(true); ?></li>
+                        <li><?php nom_propre(true); ?></li>
 			</ul>
 		</fieldset>
 		<input type="submit" value="lancer la recherche" />

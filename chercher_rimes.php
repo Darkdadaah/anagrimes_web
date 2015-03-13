@@ -2,7 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="fr">
 
 <head>
-	<title>Rimes<? if (isset($_GET['mot'])) { echo " de ".addslashes($_GET['mot']) ; } ?></title>
+	<title>Rimes<?php if (isset($_GET['mot'])) { echo " de ".addslashes($_GET['mot']) ; } ?></title>
 	<meta http-equiv="Content-Type" content="text/HTML; charset=utf-8" />
 	<link rel="stylesheet" type="text/css" media="all" href="style/default.css" />
 	<link rel="stylesheet" type="text/css" media="print" href="style/print.css" />
@@ -16,7 +16,7 @@
 	<?php require ("part_retour.php"); ?>
 	<?php require ("lib_formulaire.php"); ?>
 	
-	<form class="formulaire" name="form_rime" action="<?=$_SERVER['SCRIPT_NAME']?>#liste" method="get">
+	<form class="formulaire" name="form_rime" action="<?php $_SERVER['SCRIPT_NAME'] ?>#liste" method="get">
 	<fieldset>
 		<legend>Options de recherche</legend>
 		<fieldset>
@@ -26,12 +26,12 @@
 					echo '" />' ;
 				?></label><input type="submit" value="Lancer la recherche" /><input type="button" onclick="form.mot.value=''" value="Effacer" />
 			</p>
-			<? langues(isset($_GET['langue']) ? $_GET['langue'] : ''); ?>
-			<? types(isset($_GET['type']) ? $_GET['type'] : ''); ?>
+			<?php langues(isset($_GET['langue']) ? $_GET['langue'] : ''); ?>
+			<?php types(isset($_GET['type']) ? $_GET['type'] : ''); ?>
 			<ul>
-			<li><? flexions(true); ?></li>
-			<li><? locutions(true); ?></li>
-			<li><? gentiles(true); ?></li>
+			<li><?php flexions(true); ?></li>
+			<li><?php locutions(true); ?></li>
+			<li><?php gentiles(true); ?></li>
 			</ul>
 		</fieldset>
 		

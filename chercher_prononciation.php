@@ -16,13 +16,13 @@
 	<?php require ("part_retour.php"); ?>
 	<?php require ("lib_formulaire.php"); ?>
 	
-	<form class="formulaire" name="form_rime" action="<?=$_SERVER['SCRIPT_NAME']?>#liste" method="get">
+	<form class="formulaire" name="form_rime" action="<?php echo $_SERVER['SCRIPT_NAME'] ?>#liste" method="get">
 	<fieldset>
 		<legend>Options de recherche</legend>
 		<table>
 		<tr><td style="width: 50%;"><fieldset>
 			<legend>Dans la prononciation</legend>
-			<p class="NB">Note&nbsp;: vous pouvez écrire la prononciation de votre mot en <a href="//fr.wiktionary.org/wiki/Annexe:Prononciation">API ou X-SAMPA</a>. Si vous ne la connaissez pas, <? echo "<a href=\"prononciation_de.php\">" ?>cherchez-la d'abord sur la page dédiée</a>.</p>
+			<p class="NB">Note&nbsp;: vous pouvez écrire la prononciation de votre mot en <a href="//fr.wiktionary.org/wiki/Annexe:Prononciation">API ou X-SAMPA</a>. Si vous ne la connaissez pas, <?php echo "<a href=\"prononciation_de.php\">" ?>cherchez-la d'abord sur la page dédiée</a>.</p>
 			<p>
 				<?php
 					place(isset($_GET['place']) ? $_GET['place'] : '');
@@ -31,20 +31,20 @@
 					echo '" />';
 				?></label><input type="submit" value="Lancer la recherche" /><input type="button" onclick="form.rime.value=''" value="Effacer" />
 			</p>
-			<? langues(isset($_GET['langue']) ? $_GET['langue'] : ''); ?>
-			<? types(isset($_GET['type']) ? $_GET['type'] : ''); ?>
-			<? listes(isset($_GET['liste']) ? $_GET['liste'] : ''); ?>
+			<?php langues(isset($_GET['langue']) ? $_GET['langue'] : ''); ?>
+			<?php types(isset($_GET['type']) ? $_GET['type'] : ''); ?>
+			<?php listes(isset($_GET['liste']) ? $_GET['liste'] : ''); ?>
 			<ul>
-			<li><? flexions(true); ?></li>
-			<li><? locutions(true); ?></li>
-			<li><? gentiles(true); ?></li>
-			<li><? print_checkbox('no_correction', 'oui', 'Ne pas convertir en API', false) ?></li>
+			<li><?php flexions(true); ?></li>
+			<li><?php locutions(true); ?></li>
+			<li><?php gentiles(true); ?></li>
+			<li><?php print_checkbox('no_correction', 'oui', 'Ne pas convertir en API', false) ?></li>
 			
 			</ul>
 		</fieldset></td>
 		
 		<td style="width: 50%;">
-		<? require("part_clavier_prononciation.php"); ?>
+		<?php require("part_clavier_prononciation.php"); ?>
 		</td>
 		</tr>
 		</table>
