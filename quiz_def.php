@@ -19,9 +19,9 @@
 		<div id="answerbox" style="display: none"></div>
 		<div id="solution" style="display: none"></div>
 		<div id="buttons" style="display: none">
-			<div class="bouton" id="checkbutton">Vérifier</div>
-			<div class="bouton" id="showbutton">Dévoiler</div>
-			<div class="bouton" id="updatebutton">Suivant</div>
+			<div class="bouton" id="checkbutton">Vérifier ma réponse !</div><br>
+			<div class="bouton" id="showbutton">Donner sa langue au chat</div>
+			<div class="bouton" id="updatebutton">Question suivante...</div>
 		</div>
 		<div id="qresults" style="display: none">
 			<p>Résultats&nbsp;:</p>
