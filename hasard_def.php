@@ -8,5 +8,10 @@
 	$num = 5;
 	$defs = get_random_def(isset($_GET['lang']) ? $_GET['lang'] : NULL, $num);
 	mysql_close();
-	echo json_encode($defs);
+	$callback = isset($_GET['callback']) ? $_GET['callback'] : "";
+	if ($callback != "") {
+		echo $callback . "(" . json_encode($defs) . ")";
+	} else {
+		echo json_encode($defs);
+	}
 ?>
