@@ -1,8 +1,8 @@
 <?php
 # This file was shamelessly copied from expose-data/jsonapi.php by Rillke
 $tool_user_name = 'anagrimes';
-ini_set('log_errors',1);
-ini_set('error_log','/data/project/anagrimes/php_errors.txt');
+ini_set('log_errors', 1);
+ini_set('error_log','/data/project/anagrimes/logs/php.txt');
 
 include_once ( 'shared/common.php' ) ;
 #error_reporting( E_ALL & ~E_NOTICE ); # Don't clutter the directory with unhelpful stuff

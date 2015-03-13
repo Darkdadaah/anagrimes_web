@@ -1,6 +1,6 @@
 <?php
 	ini_set('log_errors',1);
-	ini_set('error_log','/data/project/anagrimes/php_errors.txt');
+	ini_set('error_log','/data/project/anagrimes/logs/old_php.txt');
 /***************
 ** Database connection
 ***************/
