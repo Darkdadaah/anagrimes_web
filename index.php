@@ -9,7 +9,7 @@
 </head>
 <body>
 	<div class="page">
-		<h1>Anagrimes</h1>
+		<h2>Anagrimes</h2>
 		<?php require ("part_avertissement.php"); ?>
 		<ul>
 			<li><a href="chercher_anagrammes.php">Recherche d'anagrammes</a></li>
@@ -19,13 +19,15 @@
 			<li><a href="quiz_def.php">Quiz des définitions du Wiktionnaire</a></li>
 			<!--<li><a href="chercher_transcription.php">Recherche par transcription</a></li>-->
 		</ul>
-		<h1>Liens</h1>
+		<h2>Liens</h2>
 		<ul>
 		<li><a href="//fr.wiktionary.org">Aller sur le Wiktionnaire francophone</a></li>
 		<li><a href="//fr.wiktionary.org/wiki/Utilisateur:Darkdadaah">Ma page sur le Wiktionnaire</a></li>
 		</ul>
+		<h2>Utilisateurs avancés</h2>
+		<li><a href="data/anagrimes_20150225.tar.gz">Télécharger la base de données d'anagrimes (SQL : mysql ou sqlite)</a></li>
 	</div>
-	<?
+	<?php
 	require ("lib_database.php");
         dbconnect();
         log_action('main_page2', '', '');
