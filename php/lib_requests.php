@@ -7,6 +7,7 @@ function get_entries($db, $conditions, $values, $types) {
 	if (count($conditions) > 0) {
 		$query = $query . " WHERE " . join(" AND ", $conditions);
 	}
+	$query .= " ORDER BY a_title, l_lang, l_type, l_num";
 	$list = array();
 	
 	if ($st = $db->prepare($query)) {

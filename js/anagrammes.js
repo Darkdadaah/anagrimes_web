@@ -1,5 +1,6 @@
 // Anagrams
 var api = 'api.php';
+var wikturl = '//fr.wiktionary.org/wiki/';
 $throbber = $("<img src='style/Loading.gif' id='throbber'>");
 
 var langs = {
@@ -114,8 +115,21 @@ function search_ended() {
 	$throbber.detach();
 }
 
+function define_fields() {
+	var fpars = get_form_pars();
+	var flist = ['title', 'pron', 'type', 'num', 'lang'];
+	var fields = [];
+	for (var i = 0; i < flist.length; i++) {
+		if (!fpars[ flist[i] ]) {
+			fields.push(flist[i]);
+		}
+	}
+	return fields;
+}
+
 function print_table(list) {
-	var fields = ['a_title', 'l_lang', 'l_type', 'l_num'];
+	list = prepare_list(list);
+	var fields = define_fields();
 	var tab = $("<table id='list'>");
 	for (var i=0; i < list.length; i++) {
 		var row = $("<tr>");
@@ -128,6 +142,43 @@ function print_table(list) {
 		tab.append(row);
 	}
 	$("#results").append(tab);
+}
+
+function prepare_list(list) {
+	for (var i = 0; i < list.length; i++) {
+		var l = list[i];
+		l.title = wikilink(l);
+		if (l.p_pron) {
+			l.pron = "/" + l.p_pron + "/";
+		} else {
+			l.pron = "";
+		}
+		l.lang = langs[ l.l_lang ];
+		if (!l.lang)  {
+			l.lang = "<span class='ulang'>" + l.l_lang + "</span>";
+		}
+		l.type = types[ l.l_type ];
+		if (l.l_num > 0) {
+			l.type += " " + l.l_num;
+		}
+		if (l.l_is_flexion) {
+			l.type += " (flexion)";
+		}
+		list[i] = l;
+	}
+	return list;
+}
+
+function wikilink(w) {
+	var link = $("<a />");
+	link.text(w.a_title);
+	var anchor_elts = [w.l_lang, w.l_type];
+	if (w.l_num > 0) {
+		anchor_elts.push(w.l_num);
+	}
+	var anchor = "#" + anchor_elts.join('-');
+	link.attr("href", wikturl + w.a_title + anchor);
+	return link;
 }
 
 function get_form_pars() {

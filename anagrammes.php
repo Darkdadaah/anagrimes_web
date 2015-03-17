@@ -3,22 +3,23 @@
 <head>
 	<title>Anagrammes - Anagrimes</title>
 	<meta http-equiv="Content-Type" content="text/HTML; charset=utf-8" />
-	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<link rel="stylesheet" type="text/css" media="screen" href="style/recherche.css" />
+	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
 	<link rel="shortcut icon" href="favicon.png" />
-	<script src="js/jquery-1.11.1.min.js"></script>
-	<script src="js/anagrammes.js"></script>
+	<link rel="stylesheet" type="text/css" media="screen" href="style/recherche.css" />
+	<script type="text/javascript" src="js/jquery-1.11.1.min.js"></script>
+	<script type="text/javascript" src="js/anagrammes.js"></script>
 </head>
 <body>
-<form id="search">
-<label for="string">Mot à chercher&nbsp;:&nbsp;<input type="text" name="string" id="string" value="" /></label>
-<br><label for="lang">Langue&nbsp;:&nbsp;<select name="lang" id="lang"></select></label>
-<br><label for="type">Type&nbsp;:&nbsp;<select name="type" id="type"></select></label>
-<br><input type="submit" value="Chercher des anagrammes" />
+<form id="search" action="">
+<p>
+Mot à chercher&nbsp;:&nbsp;<input type="text" name="string" id="string" value="" />
+<br />Langue&nbsp;:&nbsp;<select name="lang" id="lang"></select>
+<br />Type de mot&nbsp;:&nbsp;<select name="type" id="type"></select>
+<br /><input type="submit" value="Chercher des anagrammes" />
+</p>
 </form>
 <div id="results">
 </div>
 </body>
-</html
->
+</html>
 
