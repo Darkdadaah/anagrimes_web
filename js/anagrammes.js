@@ -149,15 +149,18 @@ function prepare_list(list) {
 		var l = list[i];
 		l.title = wikilink(l);
 		if (l.p_pron) {
-			l.pron = "/" + l.p_pron + "/";
+			l.pron = "/" + l.pront.join("/ <small>ou</small> /") + "/";
 		} else {
 			l.pron = "";
 		}
 		l.lang = langs[ l.l_lang ];
-		if (!l.lang)  {
+		if (!l.lang) {
 			l.lang = "<span class='ulang'>" + l.l_lang + "</span>";
 		}
 		l.type = types[ l.l_type ];
+		if (!l.type) {
+			l.type = "<span class='utype'>" + l.l_type + "</span>";
+		}
 		if (l.l_num > 0) {
 			l.type += " " + l.l_num;
 		}

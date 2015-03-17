@@ -1,7 +1,7 @@
 <?php
 function get_entries($db, $conditions, $values, $types) {
 	# Those are the only fields that we need
-	$fields = array("a_title", "l_genre", "l_is_flexion", "l_is_gentile", "l_is_locution", "l_lang", "l_num", "l_sigle", "l_type", "p_num", "p_pron");
+	$fields = array("a_title", "l_genre", "l_is_flexion", "l_is_gentile", "l_is_locution", "l_lang", "l_num", "l_sigle", "l_type", "l_lexid", "p_num", "p_pron");
 	$fields_txt = join(", ", $fields);
 	$query = "SELECT $fields_txt FROM entries";
 	if (count($conditions) > 0) {
@@ -52,7 +52,23 @@ function get_entries($db, $conditions, $values, $types) {
 }
 
 function fuse_prons($list) {
-	return $list;
+	#return $list;
+	# The words are supposed to be in order
+	$list2 = array();
+	for ($i = 0; $i < count($list); $i++) {
+		$lexid = $list[$i]['l_lexid'];
+		if (array_key_exists($lexid, $list2)) {
+			$list2[ $lexid ]['pront'][] = $list[$i]['p_pron'];
+		} else {
+			$list2[ $lexid ] = $list[$i];
+			$list2[ $lexid ]['pront'] = array($list[$i]['p_pron']);
+		}
+	}
+	$final_list = array();
+	foreach ($list2 as $lex) {
+		$final_list[] = $lex;
+	}
+	return $final_list;
 }
 ?>
 
