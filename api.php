@@ -50,14 +50,14 @@ if ( isset( $origin ) ) {
 // There are more clever ways to achieve this but for now, it should be sufficient
 $action = null;
 $res = array();
-if ( array_key_exists('action', $_REQUEST) ) {
-	$action = $_REQUEST['action'];
+if ( array_key_exists('action', $_GET) ) {
+	$action = $_GET['action'];
 }
 if (isset($action)) {
 	switch ($action) {
 		case 'anagram':
 			include_once ( 'php/anagrams.php' );
-			$res['list'] = get_anagrams( $_REQUEST['word'], $_REQUEST['lang'] );
+			$res['list'] = get_anagrams();
 			break;
 		case 'search':
 			include_once ( 'php/search.php' );
@@ -65,7 +65,7 @@ if (isset($action)) {
 			break;
 		case 'random':
 			include_once ( 'php/random.php' );
-			$res['list'] = get_random( $_REQUEST['lang'], $_REQUEST['num'] );
+			$res['list'] = get_random();
 			break;
 		default:
 			header('HTTP/1.0 501 Not implemented');

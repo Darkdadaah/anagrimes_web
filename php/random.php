@@ -29,18 +29,9 @@ function get_random_id($db, $langue) {
 }
 
 # Returns a random word (mot), url-friendly (raw) and anchor (ancre)
-function get_random_word($db, $lang, $num) {
-	# Defined language?
-	$langue = 'fr';
-	if ($lang) {
-		$langue = mysqli_real_escape_string($db, $lang);
-	}
-	if (!isset($num) || !is_numeric($num) || $num < 0) {
-		$num = 1;
-	}
-	if ($num > 10) {
-		$num = 10;
-	}
+function get_random_word($db, $pars) {
+	$langue = $pars["lang"];
+	$num = $pars["num"];
 	
 	$words = array();
 	for ($i = 0; $i < $num; $i++) {
@@ -65,12 +56,37 @@ function get_random_word($db, $lang, $num) {
 	return $words;
 }
 
-function get_random($lang, $num) {
+function get_rand_pars($db) {
+	$pars = array();
+	# Language
+	if (isset($_GET["lang"])) {
+		$pars["lang"] = mysqli_real_escape_string($db, $_GET["lang"]);
+	} else {
+		$pars["lang"] = "fr";
+	}
+	# Number of articles
+	if (isset($_GET["num"])) {
+		$num = $_GET["num"];
+		if (!isset($num) || !is_numeric($num) || $num < 0) {
+			$num = 1;
+		}
+		if ($num > 10) {
+			$num = 10;
+		}
+		$pars["num"] = $num;
+	} else {
+		$pars["num"] = 1;
+	}
+	return $pars;
+}
+
+function get_random() {
 	$mydbpars = parse_ini_file("/data/project/anagrimes/anagrimes.cnf");
 	$dbname = $mydbpars['dbname'];
 	$db = openToolDB($dbname);
 	mysqli_set_charset($db, 'utf8');
-	return get_random_word($db, $lang, $num);
+	$pars = get_rand_pars($db);
+	return get_random_word($db, $pars);
 	return "word";
 }
 ?>
