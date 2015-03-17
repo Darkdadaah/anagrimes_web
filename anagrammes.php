@@ -11,8 +11,10 @@
 </head>
 <body>
 <form id="search">
-<label for="mot">Mot à chercher&nbsp;:&nbsp;<input type="text" name="string" id="string" value="" /></label>
-<input type="submit" value="Chercher des anagrammes" />
+<label for="string">Mot à chercher&nbsp;:&nbsp;<input type="text" name="string" id="string" value="" /></label>
+<br><label for="lang">Langue&nbsp;:&nbsp;<select name="lang" id="lang"></select></label>
+<br><label for="type">Type&nbsp;:&nbsp;<select name="type" id="type"></select></label>
+<br><input type="submit" value="Chercher des anagrammes" />
 </form>
 <div id="results">
 </div>
