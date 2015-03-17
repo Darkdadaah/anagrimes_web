@@ -2,3 +2,7 @@
 .ulang, .utype {
 	font-style: italic;
 }
+
+tr:nth-child(odd) {
+	background: aliceblue;
+}

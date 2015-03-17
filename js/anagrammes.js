@@ -117,7 +117,7 @@ function search_ended() {
 
 function define_fields() {
 	var fpars = get_form_pars();
-	var flist = ['title', 'pron', 'type', 'num', 'lang'];
+	var flist = ['title', 'pron', 'type', 'lang'];
 	var fields = [];
 	for (var i = 0; i < flist.length; i++) {
 		if (!fpars[ flist[i] ]) {
