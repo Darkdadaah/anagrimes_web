@@ -3,6 +3,13 @@ var api = 'api.php';
 var wikturl = '//fr.wiktionary.org/wiki/';
 $throbber = $("<img src='style/Loading.gif' id='throbber'>");
 
+var fnames = {
+	'title' : 'Mot',
+       	'pron' : 'Prononciation',
+       	'type' : 'Type de mot',
+       	'lang' : 'Langue',
+};
+
 var langs = {
 	'*' : '*',
 // FRANÇAIS
@@ -131,6 +138,15 @@ function print_table(list) {
 	list = prepare_list(list);
 	var fields = define_fields();
 	var tab = $("<table id='list'>");
+	// Header
+	var header = $("<tr>");
+	for (var i = 0; i < fields.length; i++) {
+		var fname = fnames[ fields[i] ];
+		var head = $("<th>").html(fname);
+		header.append(head);
+	}
+	tab.append(header);
+	// Content
 	for (var i=0; i < list.length; i++) {
 		var row = $("<tr>");
 		for (var j=0; j < fields.length; j++) {

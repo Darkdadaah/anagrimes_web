@@ -3,6 +3,25 @@
 	font-style: italic;
 }
 
+table {
+	border-collapse: collapse;
+}
+
 tr:nth-child(odd) {
 	background: aliceblue;
+}
+
+td, th {
+	padding: 5px;
+	text-align: center;
+	border-left: 1px solid #DDD;
+}
+
+th {
+	background: #DDF;
+	border-left: 1px solid #AAA;
+}
+
+th:first-child, td:first-child {
+	border: 0;
 }
