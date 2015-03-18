@@ -13,30 +13,13 @@ function alphagram($word) {
 	return $alphag;
 }
 
-# Returns a random word (mot), url-friendly (raw) and anchor (ancre)
-function get_anagrams_list($db, $pars) {
-	$anagrams = array();
-	if ($pars['string'] == '') {
-		return $anagrams;
-	}
-	
-	# Prepare request
+function new_request($pars) {
 	$request = array(
 		'conditions' => array(),
 		'values' => array(),
 		'types' => ''
 	);
 	
-	# Word?
-	if ($pars['string']) {
-		array_push($request['conditions'], "a_alphagram=?");
-		array_push($request['values'], alphagram($pars['string']));
-		$request['types'] .= "s";
-		#array_push($request['conditions'], "a_alphagram=\"aeimr\"");
-	} else {
-		# no word: no anagrams
-		return array();
-	}
 	# Language? Default: all
 	if ($pars['lang']) {
 		array_push($request['conditions'], "l_lang=?");
@@ -80,6 +63,29 @@ function get_anagrams_list($db, $pars) {
 		} else {
 			array_push($request['conditions'], "(NOT l_type='nom-pr' AND NOT l_type='prenom' AND NOT l_type='nom-fam')");
 		}
+	}
+	return $request;	
+}
+
+# Returns a random word (mot), url-friendly (raw) and anchor (ancre)
+function get_anagrams_list($db, $pars) {
+	$anagrams = array();
+	if ($pars['string'] == '') {
+		return $anagrams;
+	}
+	
+	# Prepare request
+	$request = new_request($pars);
+	
+	# Word?
+	if ($pars['string']) {
+		array_push($request['conditions'], "a_alphagram=?");
+		array_push($request['values'], alphagram($pars['string']));
+		$request['types'] .= "s";
+		#array_push($request['conditions'], "a_alphagram=\"aeimr\"");
+	} else {
+		# no word: no anagrams
+		return array();
 	}
 	$anagrams = get_entries($db, $request);
 	return $anagrams;
