@@ -15,66 +15,73 @@ function alphagram($word) {
 
 # Returns a random word (mot), url-friendly (raw) and anchor (ancre)
 function get_anagrams_list($db, $pars) {
+	$anagrams = array();
+	if ($pars['string'] == '') {
+		return $anagrams;
+	}
+	
 	# Prepare request
-	$conditions = array();
-	$values = array();
-	$types = "";
+	$request = array(
+		'conditions' => array(),
+		'values' => array(),
+		'types' => ''
+	);
+	
 	# Word?
 	if ($pars['string']) {
-		array_push($conditions, "a_alphagram=?");
-		array_push($values, alphagram($pars['string']));
-		$types .= "s";
-		#array_push($conditions, "a_alphagram=\"aeimr\"");
+		array_push($request['conditions'], "a_alphagram=?");
+		array_push($request['values'], alphagram($pars['string']));
+		$request['types'] .= "s";
+		#array_push($request['conditions'], "a_alphagram=\"aeimr\"");
 	} else {
 		# no word: no anagrams
 		return array();
 	}
 	# Language? Default: all
 	if ($pars['lang']) {
-		array_push($conditions, "l_lang=?");
-		array_push($values, mysqli_real_escape_string($db, $pars['lang']));
-		$types .= "s";
+		array_push($request['conditions'], "l_lang=?");
+		array_push($request['values'], mysqli_real_escape_string($db, $pars['lang']));
+		$request['types'] .= "s";
 	}
 	# Type
 	if ($pars['type']) {
-		array_push($conditions, "l_type=?");
-		array_push($values, mysqli_real_escape_string($db, $pars['type']));
-		$types .= "s";
+		array_push($request['conditions'], "l_type=?");
+		array_push($request['values'], mysqli_real_escape_string($db, $pars['type']));
+		$request['types'] .= "s";
 	}
 	# Flexion
 	if (isset($pars['flex'])) {
 		if ($pars['flex'] == true) {
-			array_push($conditions, "l_is_flexion=TRUE");
+			array_push($request['conditions'], "l_is_flexion=TRUE");
 		} else {
-			array_push($conditions, "l_is_flexion=FALSE");
+			array_push($request['conditions'], "l_is_flexion=FALSE");
 		}
 	}
 	# Locution
 	if (isset($pars['loc'])) {
 		if ($pars['loc'] == true) {
-			array_push($conditions, "l_is_locution=TRUE");
+			array_push($request['conditions'], "l_is_locution=TRUE");
 		} else {
-			array_push($conditions, "l_is_locution=FALSE");
+			array_push($request['conditions'], "l_is_locution=FALSE");
 		}
 	}
 	# Gentilé
 	if (isset($pars['gent'])) {
 		if ($pars['gent'] == true) {
-			array_push($conditions, "l_is_gentile=TRUE");
+			array_push($request['conditions'], "l_is_gentile=TRUE");
 		} else {
-			array_push($conditions, "l_is_gentile=FALSE");
+			array_push($request['conditions'], "l_is_gentile=FALSE");
 		}
 	}
 	# Nom propre
 	if (isset($pars['nom-pr'])) {
 		if ($pars['nom-pr'] == true) {
-			array_push($conditions, "(l_type='nom-pr' OR l_type='prenom' OR l_type='nom-fam')");
+			array_push($request['conditions'], "(l_type='nom-pr' OR l_type='prenom' OR l_type='nom-fam')");
 		} else {
-			array_push($conditions, "(NOT l_type='nom-pr' AND NOT l_type='prenom' AND NOT l_type='nom-fam')");
+			array_push($request['conditions'], "(NOT l_type='nom-pr' AND NOT l_type='prenom' AND NOT l_type='nom-fam')");
 		}
 	}
-	
-	$anagrams = get_entries($db, $conditions, $values, $types);
+	$anagrams = get_entries($db, $request);
 	return $anagrams;
 }
 

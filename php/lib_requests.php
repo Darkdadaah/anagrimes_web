@@ -1,11 +1,11 @@
 <?php
-function get_entries($db, $conditions, $values, $types) {
+function get_entries($db, $request) {
 	# Those are the only fields that we need
 	$fields = array("a_title", "l_genre", "l_is_flexion", "l_is_gentile", "l_is_locution", "l_lang", "l_num", "l_sigle", "l_type", "l_lexid", "p_num", "p_pron");
 	$fields_txt = join(", ", $fields);
 	$query = "SELECT $fields_txt FROM entries";
-	if (count($conditions) > 0) {
-		$query = $query . " WHERE " . join(" AND ", $conditions);
+	if (count($request['conditions']) > 0) {
+		$query = $query . " WHERE " . join(" AND ", $request['conditions']);
 	}
 	$query .= " ORDER BY a_title_flat, a_title, l_lang, l_type, l_num";
 	$list = array();
@@ -17,9 +17,9 @@ function get_entries($db, $conditions, $values, $types) {
 		
 		# We need to bind the values for the placeholder
 		# For that, bind_params only accepts refs, so we convert the list
-		$val_params[] = & $types;
-		for($i = 0; $i < count($values); $i++) {
-		  $val_params[] = & $values[$i];
+		$val_params[] = & $request['types'];
+		for($i = 0; $i < count($request['values']); $i++) {
+		  $val_params[] = & $request['values'][$i];
 		}
 		# We also need to bind the values returned, also as refs
 		# We bind the data in $row
