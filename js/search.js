@@ -79,15 +79,21 @@ var types = {
 	'part' : 'particule',
 };
 
+
+var searchs = {
+	'anagram' : 'Anagrammes',
+	'search' : 'Graphie',
+};
+
 function print_form() {
 	// Langs select
 	selector(langs, 'lang');
 	selector(types, 'type');
+	selector(searchs, 'search_type');
 }
 
 function selector(list, id) {
 	var sel = $("#" + id);
-	console.log(sel);
 	for (var k in list) {
 		var opt = $("<option>");
 		opt.val(k);
@@ -99,13 +105,17 @@ function selector(list, id) {
 function anagrams() {
 	search_started();
 	var pars = get_form_pars();
-	pars.action = 'anagram';
 	var url = api + '?' + jQuery.param(pars);
 	console.log(url);
 	$.getJSON(url, function(data) {
 		search_ended();
-		console.log("Done");
-		print_table(data.list);
+		if (data.status == 'success') {
+			console.log("Success");
+			print_table(data.list);
+		} else {
+			console.log("Error...");
+			print_error(data);
+		}
 	}).fail(function(e) {
 		search_ended();
 		console.log("Failed");
@@ -116,6 +126,7 @@ function search_started() {
 	$("#results")
 		.empty()
 		.after($throbber);
+	$("#error").empty();
 }
 
 function search_ended() {
@@ -134,7 +145,17 @@ function define_fields() {
 	return fields;
 }
 
+function print_error(data) {
+	var stat = 'Unknown error';
+	if (data.status) {
+		stat = data.status;
+	}
+	$('#error').html(stat);
+	console.log(data);
+}
+
 function print_table(list) {
+	console.log(list);
 	list = prepare_list(list);
 	var fields = define_fields();
 	var tab = $("<table id='list'>");
@@ -148,6 +169,7 @@ function print_table(list) {
 	tab.append(header);
 	// Content
 	for (var i=0; i < list.length; i++) {
+		console.log(i);
 		var row = $("<tr>");
 		for (var j=0; j < fields.length; j++) {
 			var f = list[i][ fields[j] ];
@@ -204,7 +226,8 @@ function get_form_pars() {
 	var fpars = {
 		'string' : $("input#string").val(),
 		'lang' : $("#lang").val(),
-		'type' : $("#type").val()
+		'type' : $("#type").val(),
+		'action' : $("#search_type").val(),
 	};
 	fpars = remove_all(fpars);
 	return fpars;

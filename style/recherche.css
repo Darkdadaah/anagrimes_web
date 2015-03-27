@@ -25,3 +25,15 @@ th {
 th:first-child, td:first-child {
 	border: 0;
 }
+
+.table {
+	display: table;
+}
+
+.row {
+	display: table-row;
+}
+
+.cell {
+	display: table-cell;
+}

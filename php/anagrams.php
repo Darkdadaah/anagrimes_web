@@ -20,7 +20,9 @@ function get_anagrams_list($db) {
 	$pars = get_string_pars($db);
 	$anagrams = array();
 	if (!isset($pars['string']) || $pars['string'] == '') {
-		return $anagrams;
+		return array(
+			'status' => 'no_parameters',
+		);
 	}
 	
 	# Prepare request from parameters
@@ -34,10 +36,16 @@ function get_anagrams_list($db) {
 		#array_push($request['conditions'], "a_alphagram=\"aeimr\"");
 	} else {
 		# no word: no anagrams
-		return array();
+		return array(
+			'status' => 'no_result',
+		);
 	}
 	$anagrams = get_entries($db, $request);
-	return $anagrams;
+	$output = array(
+		'status' => 'success',
+		'list' => $anagrams,
+	);
+	return $output;
 }
 
 function get_anagrams() {

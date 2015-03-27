@@ -57,11 +57,11 @@ if (isset($action)) {
 	switch ($action) {
 		case 'anagram':
 			include_once ( 'php/anagrams.php' );
-			$res['list'] = get_anagrams();
+			$res = get_anagrams();
 			break;
 		case 'search':
 			include_once ( 'php/search.php' );
-			$res['list'] = array( $_REQUEST['word'], $_REQUEST['lang'] );
+			$res = get_graphies();
 			break;
 		case 'random':
 			include_once ( 'php/random.php' );
@@ -73,8 +73,8 @@ if (isset($action)) {
 			break;
 	}
 } else {
-	$res['error'] = 'No action provided. Allowed are: random.';
-	
+	$res['status'] = 'no_action';
+	$res['error'] = 'No action provided. Allowed are: random, anagrams, search.';
 }
 echo json_encode($res);
 ?>
