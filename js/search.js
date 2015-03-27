@@ -7,6 +7,7 @@ var fnames = {
 	'title' : 'Mot',
        	'pron' : 'Prononciation',
        	'type' : 'Type de mot',
+       	'genre' : 'Genre',
        	'lang' : 'Langue',
 };
 
@@ -79,6 +80,15 @@ var types = {
 	'part' : 'particule',
 };
 
+var genres = {
+	'*' : '*',
+	'm' : 'masculin',
+	'f' : 'féminin',
+	'mf' : 'masculin et féminin',
+	'mf?' : 'masculin et féminin, hésitant',
+	'n' : 'neutre',
+	'c' : 'commun',
+};
 
 var searchs = {
 	'anagram' : 'Anagrammes',
@@ -90,6 +100,7 @@ function print_form() {
 	selector(langs, 'lang');
 	selector(types, 'type');
 	selector(searchs, 'search_type');
+	selector(genres, 'genre');
 }
 
 function selector(list, id) {
@@ -135,7 +146,7 @@ function search_ended() {
 
 function define_fields() {
 	var fpars = get_form_pars();
-	var flist = ['title', 'pron', 'type', 'lang'];
+	var flist = ['title', 'pron', 'type', 'genre', 'lang'];
 	var fields = [];
 	for (var i = 0; i < flist.length; i++) {
 		if (!fpars[ flist[i] ]) {
@@ -155,7 +166,6 @@ function print_error(data) {
 }
 
 function print_table(list) {
-	console.log(list);
 	list = prepare_list(list);
 	var fields = define_fields();
 	var tab = $("<table id='list'>");
@@ -169,7 +179,6 @@ function print_table(list) {
 	tab.append(header);
 	// Content
 	for (var i=0; i < list.length; i++) {
-		console.log(i);
 		var row = $("<tr>");
 		for (var j=0; j < fields.length; j++) {
 			var f = list[i][ fields[j] ];
@@ -198,6 +207,10 @@ function prepare_list(list) {
 		l.type = types[ l.l_type ];
 		if (!l.type) {
 			l.type = "<span class='utype'>" + l.l_type + "</span>";
+		}
+		l.genre = genres[ l.l_genre ];
+		if (!l.genre) {
+			l.genre = "<span class='ugenre'>" + l.l_genre + "</span>";
 		}
 		if (l.l_num > 0) {
 			l.type += " " + l.l_num;

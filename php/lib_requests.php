@@ -10,7 +10,7 @@ function start_db() {
 function get_string_pars($db) {
 	$pars = array();
 
-	$text = array("string", "lang", "type");
+	$text = array("string", "lang", "type", "genre");
 	$bool = array("flex", "loc", "gent", "nom-pr");
 
 	for ($i = 0; $i < count($text); $i++) {
@@ -47,6 +47,12 @@ function new_request($db, $pars) {
 	if ($pars['type']) {
 		array_push($request['conditions'], "l_type=?");
 		array_push($request['values'], mysqli_real_escape_string($db, $pars['type']));
+		$request['types'] .= "s";
+	}
+	# Genre
+	if ($pars['genre']) {
+		array_push($request['conditions'], "l_genre=?");
+		array_push($request['values'], mysqli_real_escape_string($db, $pars['genre']));
 		$request['types'] .= "s";
 	}
 	# Flexion

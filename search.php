@@ -29,6 +29,10 @@
 	<div class="cell">Type de mot&nbsp;:&nbsp;</div>
 	<div class="cell"><select name="type" id="type"></select></div>
 </div>
+<div class="row">
+	<div class="cell">Genre&nbsp;:&nbsp;</div>
+	<div class="cell"><select name="genre" id="genre"></select></div>
+</div>
 </div>
 <br /><input type="submit" value="Chercher" />
 </p>
