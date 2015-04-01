@@ -38,19 +38,19 @@ function new_request($db, $pars) {
 	);
 	
 	# Language? Default: all
-	if ($pars['lang']) {
+	if (array_key_exists('lang', $pars)) {
 		array_push($request['conditions'], "l_lang=?");
 		array_push($request['values'], mysqli_real_escape_string($db, $pars['lang']));
 		$request['types'] .= "s";
 	}
 	# Type
-	if ($pars['type']) {
+	if (array_key_exists('type', $pars)) {
 		array_push($request['conditions'], "l_type=?");
 		array_push($request['values'], mysqli_real_escape_string($db, $pars['type']));
 		$request['types'] .= "s";
 	}
 	# Genre
-	if ($pars['genre']) {
+	if (array_key_exists('genre', $pars)) {
 		array_push($request['conditions'], "l_genre=?");
 		array_push($request['values'], mysqli_real_escape_string($db, $pars['genre']));
 		$request['types'] .= "s";
