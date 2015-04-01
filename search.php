@@ -34,10 +34,11 @@
 	<div class="cell"><select name="genre" id="genre"></select></div>
 </div>
 </div>
-<br /><input type="submit" value="Chercher" />
+<br /><input type="submit" value="Chercher" id="search_button" />
 </p>
 </form>
 <div id="error"></div>
+<div id="results_num"></div>
 <div id="results"></div>
 </body>
 </html>

@@ -123,6 +123,7 @@ function anagrams() {
 		if (data.status == 'success') {
 			console.log("Success");
 			print_table(data.list);
+			console.log(data);
 		} else {
 			console.log("Error...");
 			print_error(data);
@@ -134,14 +135,17 @@ function anagrams() {
 }
 
 function search_started() {
-	$("#results")
-		.empty()
-		.after($throbber);
+	$("#results_num").empty();
+	$("#results").empty();
 	$("#error").empty();
+	$("#search_button")
+		.attr("disabled", "disabled")
+		.after($throbber);
 }
 
 function search_ended() {
 	$throbber.detach();
+	$("#search_button").removeAttr("disabled");
 }
 
 function define_fields() {
@@ -166,6 +170,14 @@ function print_error(data) {
 }
 
 function print_table(list) {
+	var num = list.length;
+	if (num == 0) {
+		$("#results_num").html("Pas de résultat");
+		return;
+	}
+	$res = num == 1 ? " résultat" : " résultats";
+	$("#results_num").html(num + $res);
+	
 	list = prepare_list(list);
 	var fields = define_fields();
 	var tab = $("<table id='list'>");
