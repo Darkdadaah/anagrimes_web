@@ -5,16 +5,26 @@ require_once( 'lib_requests.php' );
 $max = array();
 
 function count_known($word) {
-	str_replace('?', '', $word);
+	$word = preg_replace('/[\?*]/', '', $word);
 	return strlen($word);
 }
 
 function decide_search($pars, $nchars, $nkchars, $request) {
+	$str = $pars['string'];
+	$catch = array();
 	# Exact same length? Exact search
 	if ($nchars == $nkchars) {
 		array_push($request['conditions'], "a_title_flat=?");
-		array_push($request['values'], non_diacritique($pars['string']));
+		array_push($request['values'], non_diacritique($str));
 		$request['types'] .= "s";
+	# Include one incomplete part at the end?
+	} elseif (preg_match("/^([^\*]+)[*\?]+$/", $str, $catch)) {
+		$q = non_diacritique($catch[1])."%";
+		array_push($request['conditions'], 'a_title_flat LIKE "'.$q.'"');
+	# Include one incomplete part at the start?
+	} elseif (preg_match("/^[*\?]+([^\*]+)+$/", $str, $catch)) {
+		$q = "%".non_diacritique(utf8_strrev($catch[1]));
+		array_push($request['conditions'], 'a_title_flat_r LIKE "'.$q.'"');
 	} else {
 		return array();
 	}
