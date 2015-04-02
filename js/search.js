@@ -11,10 +11,15 @@ var fnames = {
        	'lang' : 'Langue',
 };
 
+var searchs = {
+	'search' : 'Graphie',
+	'anagram' : 'Anagrammes',
+};
+
 var langs = {
-	'*' : '*',
 // FRANÇAIS
 	'fr' : 'français',
+	'*' : '*',
 	'fro' : 'ancien français',
 // ALPHABET LATIN
 	'af' : 'afrikaans',
@@ -90,11 +95,6 @@ var genres = {
 	'c' : 'commun',
 };
 
-var searchs = {
-	'anagram' : 'Anagrammes',
-	'search' : 'Graphie',
-};
-
 function print_form() {
 	// Langs select
 	selector(langs, 'lang');
@@ -118,6 +118,7 @@ function anagrams() {
 	var pars = get_form_pars();
 	var url = api + '?' + jQuery.param(pars);
 	console.log(url);
+	console.log(pars);
 	$.getJSON(url, function(data) {
 		search_ended();
 		if (data.status == 'success') {
@@ -250,9 +251,13 @@ function wikilink(w) {
 function get_form_pars() {
 	var fpars = {
 		'string' : $("input#string").val(),
+		'action' : $("#search_type").val(),
 		'lang' : $("#lang").val(),
 		'type' : $("#type").val(),
-		'action' : $("#search_type").val(),
+		'genre' : $("#genre").val(),
+		'flex' : $("#flex").is(':checked'),
+		'loc' : $("#loc").is(':checked'),
+		'gent' : $("#gent").is(':checked'),
 	};
 	fpars = remove_all(fpars);
 	return fpars;
