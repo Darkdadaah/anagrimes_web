@@ -20,9 +20,9 @@ function get_string_pars($db) {
 	}
 	for ($i = 0; $i < count($bool); $i++) {
 		if (isset( $_GET[ $bool[$i] ] )) {
-			if ( $_GET[ $bool[$i] ] == '1') {
+			if ( $_GET[ $bool[$i] ] == '1' or $_GET[ $bool[$i] ] == 'true') {
 				$pars[ $bool[$i] ] = true;
-			} elseif ( $_GET[ $bool[$i] ] == '0') {
+			} elseif ( $_GET[ $bool[$i] ] == '0' or $_GET[ $bool[$i] ] == 'false') {
 				$pars[ $bool[$i] ] = false;
 			}
 		}
@@ -56,28 +56,16 @@ function new_request($db, $pars) {
 		$request['types'] .= "s";
 	}
 	# Flexion
-	if (isset($pars['flex'])) {
-		if ($pars['flex'] == true) {
-			array_push($request['conditions'], "l_is_flexion=TRUE");
-		} else {
-			array_push($request['conditions'], "l_is_flexion=FALSE");
-		}
+	if (!array_key_exists('flex', $pars) or $pars['flex'] == false) {
+		array_push($request['conditions'], "l_is_flexion=FALSE");
 	}
 	# Locution
-	if (isset($pars['loc'])) {
-		if ($pars['loc'] == true) {
-			array_push($request['conditions'], "l_is_locution=TRUE");
-		} else {
-			array_push($request['conditions'], "l_is_locution=FALSE");
-		}
+	if (!array_key_exists('loc', $pars) or $pars['loc'] == false) {
+		array_push($request['conditions'], "l_is_locution=FALSE");
 	}
 	# Gentilé
-	if (isset($pars['gent'])) {
-		if ($pars['gent'] == true) {
-			array_push($request['conditions'], "l_is_gentile=TRUE");
-		} else {
-			array_push($request['conditions'], "l_is_gentile=FALSE");
-		}
+	if (!array_key_exists('gent', $pars) or $pars['gent'] == false) {
+		array_push($request['conditions'], "l_is_gentile=FALSE");
 	}
 	# Nom propre
 	if (isset($pars['nom-pr'])) {
@@ -92,7 +80,7 @@ function new_request($db, $pars) {
 
 function get_entries($db, $request) {
 	# Those are the only fields that we need
-	$fields = array("a_title", "l_genre", "l_is_flexion", "l_is_gentile", "l_is_locution", "l_lang", "l_num", "l_sigle", "l_type", "l_lexid", "p_num", "p_pron");
+	$fields = array("a_title", "l_genre", "l_is_flexion", "l_is_gentile", "l_is_locution", "l_lang", "l_num", "l_sigle", "l_type", "l_lexid", "p_num", "p_pron", "length(a_title_flat)");
 	$fields_txt = join(", ", $fields);
 	$query = "SELECT $fields_txt FROM entries";
 	if (count($request['conditions']) > 0) {
@@ -139,7 +127,9 @@ function get_entries($db, $request) {
 			$list = fuse_prons($list);
 		}
 	}
-	return $list;
+	$request['list'] = $list;
+	$request['query'] = $query;
+	return $request;
 }
 
 function fuse_prons($list) {

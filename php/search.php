@@ -5,26 +5,46 @@ require_once( 'lib_requests.php' );
 $max = array();
 
 function count_known($word) {
-	$word = preg_replace('/[\?*]/', '', $word);
-	return strlen($word);
+	return strlen(known($word));
+}
+function known($word) {
+	return preg_replace('/[\?\*]+/', '', $word);
 }
 
 function decide_search($pars, $nchars, $nkchars, $request) {
 	$str = $pars['string'];
+	$title = 'a_title';
+	$flat = true;
+	if (!array_key_exists('noflat', $pars) or $pars['noflat'] == false) {
+		$title = 'a_title_flat';
+		$flat = false;
+	}
 	$catch = array();
 	# Exact same length? Exact search
 	if ($nchars == $nkchars) {
-		array_push($request['conditions'], "a_title_flat=?");
-		array_push($request['values'], non_diacritique($str));
+		array_push($request['conditions'], "$title=?");
+		array_push($request['values'], $str);
 		$request['types'] .= "s";
 	# Include one incomplete part at the end?
-	} elseif (preg_match("/^([^\*]+)[*\?]+$/", $str, $catch)) {
-		$q = non_diacritique($catch[1])."%";
-		array_push($request['conditions'], 'a_title_flat LIKE "'.$q.'"');
+	} elseif (preg_match("/^([^*\?]+)[*\?]+$/", $str, $catch)) {
+		$q = $flat ? non_diacritique($catch[1]) : $catch[1];
+		$q .= "%";
+		array_push($request['conditions'], "$title LIKE ?");
+		array_push($request['values'], $q);
+		$request['types'] .= 's';
+		if (preg_match("/\?/", $str)) {
+			array_push($request['conditions'], "length(a_title_flat)=$nchars");
+		}
 	# Include one incomplete part at the start?
-	} elseif (preg_match("/^[*\?]+([^\*]+)+$/", $str, $catch)) {
-		$q = "%".non_diacritique(utf8_strrev($catch[1]));
-		array_push($request['conditions'], 'a_title_flat_r LIKE "'.$q.'"');
+	} elseif (preg_match("/^[*\?]+([^*\?]+)+$/", $str, $catch)) {
+		$q = $flat ? non_diacritique(utf8_strrev($catch[1])) : utf8_strrev($catch[1]);
+		$q .= "%";
+		array_push($request['conditions'], $title . "_r LIKE ?");
+		array_push($request['values'], $q);
+		$request['types'] .= 's';
+		if (preg_match("/\?/", $str)) {
+			array_push($request['conditions'], "length(a_title_flat)=$nchars");
+		}
 	} else {
 		return array();
 	}
@@ -55,7 +75,7 @@ function get_graphies_list($db) {
 		if ($char_count == 0) {
 			return array('status' => 'no_char');
 		} elseif ($char_count > 2 and $known_char_count <= 1) {
-			return array('status' => "2_chars_needed ($flat, $char_count, $known_char_count");
+			return array('status' => "2_chars_needed ($flat, ".$pars['string'] . ', '. known($pars['string']).", $char_count, $known_char_count)");
 		} else {
 			# Ok! search
 			$request = decide_search($pars, $char_count, $known_char_count, $request);
@@ -67,12 +87,14 @@ function get_graphies_list($db) {
 		# no word
 		return array('status' => 'no_string');
 	}
-	$graphies = get_entries($db, $request);
-	$output = array(
-		'status' => 'success',
-		'list' => $graphies,
-	);
-	return $output;
+	$request = get_entries($db, $request);
+	if (array_key_exists('list', $request)) {
+		$output = $request;
+		$output['status'] = 'success';
+		return $output;
+	} else {
+		return array("status" => "error_no_list");
+	}
 }
 
 function get_graphies() {

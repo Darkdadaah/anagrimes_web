@@ -40,11 +40,17 @@ function get_anagrams_list($db) {
 			'status' => 'no_result',
 		);
 	}
-	$anagrams = get_entries($db, $request);
-	$output = array(
-		'status' => 'success',
-		'list' => $anagrams,
-	);
+	$request = get_entries($db, $request);
+	if (array_key_exists('list', $request)) {
+		$output = array(
+			'status' => 'success',
+			'list' => $request['list'],
+			'query' => $request['query']
+		);
+		return $output;
+	} else {
+		return array("status" => "error_no_list");
+	}
 	return $output;
 }
 
