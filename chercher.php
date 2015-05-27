@@ -45,6 +45,10 @@
 	<div class="cell"><label for="gent">Inclure gentilés&nbsp;:</label></div>
 	<div class="cell"><input type="checkbox" name="gent" id="gent" /></div>
 </div>
+<div class="row">
+	<div class="cell"><label for="noflat">Prendre en compte<br>accents et majuscules&nbsp;:</label></div>
+	<div class="cell"><input type="checkbox" name="noflat" id="noflat" /></div>
+</div>
 </div>
 <br /><input type="submit" value="Chercher" id="search_button" />
 </p>

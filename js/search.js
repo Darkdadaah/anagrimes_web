@@ -258,6 +258,7 @@ function get_form_pars() {
 		'flex' : $("#flex").is(':checked'),
 		'loc' : $("#loc").is(':checked'),
 		'gent' : $("#gent").is(':checked'),
+		'noflat' : $("#noflat").is(':checked'),
 	};
 	fpars = remove_all(fpars);
 	return fpars;

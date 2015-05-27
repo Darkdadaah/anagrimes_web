@@ -11,7 +11,7 @@ function get_string_pars($db) {
 	$pars = array();
 
 	$text = array("string", "lang", "type", "genre");
-	$bool = array("flex", "loc", "gent", "nom-pr");
+	$bool = array("flex", "loc", "gent", "noflat");
 
 	for ($i = 0; $i < count($text); $i++) {
 		if (isset( $_GET[ $text[$i] ] )) {
@@ -78,11 +78,15 @@ function new_request($db, $pars) {
 	return $request;	
 }
 
-function get_entries($db, $request) {
+function get_entries($db, $request, $pars) {
 	# Those are the only fields that we need
 	$fields = array("a_title", "l_genre", "l_is_flexion", "l_is_gentile", "l_is_locution", "l_lang", "l_num", "l_sigle", "l_type", "l_lexid", "p_num", "p_pron", "length(a_title_flat)");
 	$fields_txt = join(", ", $fields);
-	$query = "SELECT $fields_txt FROM entries";
+	$table = 'entries';
+	if (isset($pars) and $pars['lang'] == 'fr' and !$pars['flex'] and !$pars['loc'] and !$pars['gent']) {
+		$table = 'entries_fr';
+	}
+	$query = "SELECT $fields_txt FROM $table";
 	if (count($request['conditions']) > 0) {
 		$query = $query . " WHERE " . join(" AND ", $request['conditions']);
 	}

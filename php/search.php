@@ -10,43 +10,67 @@ function count_known($word) {
 function known($word) {
 	return preg_replace('/[\?\*]+/', '', $word);
 }
-
+function clean_string($word) {
+	return str_replace('.', '?', $word);
+}
 function decide_search($pars, $nchars, $nkchars, $request) {
-	$str = $pars['string'];
-	$title = 'a_title';
+	$str = clean_string($pars['string']);
+	$title = 'a_title_flat';
 	$flat = true;
-	if (!array_key_exists('noflat', $pars) or $pars['noflat'] == false) {
-		$title = 'a_title_flat';
+	if (array_key_exists('noflat', $pars) and $pars['noflat'] == true) {
+		$title = 'a_title';
 		$flat = false;
 	}
 	$catch = array();
 	# Exact same length? Exact search
 	if ($nchars == $nkchars) {
+		$q = $flat ? non_diacritique($str) : $str;
 		array_push($request['conditions'], "$title=?");
-		array_push($request['values'], $str);
+		array_push($request['values'], $q);
 		$request['types'] .= "s";
-	# Include one incomplete part at the end?
-	} elseif (preg_match("/^([^*\?]+)[*\?]+$/", $str, $catch)) {
-		$q = $flat ? non_diacritique($catch[1]) : $catch[1];
-		$q .= "%";
-		array_push($request['conditions'], "$title LIKE ?");
-		array_push($request['values'], $q);
-		$request['types'] .= 's';
-		if (preg_match("/\?/", $str)) {
-			array_push($request['conditions'], "length(a_title_flat)=$nchars");
-		}
-	# Include one incomplete part at the start?
-	} elseif (preg_match("/^[*\?]+([^*\?]+)+$/", $str, $catch)) {
-		$q = $flat ? non_diacritique(utf8_strrev($catch[1])) : utf8_strrev($catch[1]);
-		$q .= "%";
-		array_push($request['conditions'], $title . "_r LIKE ?");
-		array_push($request['values'], $q);
-		$request['types'] .= 's';
-		if (preg_match("/\?/", $str)) {
-			array_push($request['conditions'], "length(a_title_flat)=$nchars");
-		}
 	} else {
-		return array();
+		if (preg_match("/\?/", $str)) {
+			array_push($request['conditions'], "length(a_title_flat)=$nchars");
+		}
+		$search_ok = false;
+		# Include one incomplete part at the end?
+		if (preg_match("/^([^*\?]+)[*\?]+/", $str, $catch)) {
+			$q = $flat ? non_diacritique($catch[1]) : $catch[1];
+			$q .= "%";
+			array_push($request['conditions'], "$title LIKE ?");
+			array_push($request['values'], $q);
+			$request['types'] .= 's';
+			$search_ok = true;
+		}
+		# Include one incomplete part at the start?
+		if (preg_match("/[*\?]+([^*\?]+)+$/", $str, $catch)) {
+			$q = $flat ? non_diacritique(utf8_strrev($catch[1])) : utf8_strrev($catch[1]);
+			$q .= "%";
+			array_push($request['conditions'], $title . "_r LIKE ?");
+			array_push($request['values'], $q);
+			$request['types'] .= 's';
+			$search_ok = true;
+		}
+		# Any letter between stars/interrogation mark?
+		if (preg_match("/[\*\?][^\*\?][\*\?]/", $str)) {
+			$search_ok = false;
+			$q = $flat ? non_diacritique($str) : $str;
+			$str = preg_replace('/\*/', '.+', $q);
+			$q = preg_replace('/\?/', '.', $q);
+			$q = "^$q$";
+			array_push($request['conditions'], $title . " REGEXP ?");
+			array_push($request['values'], $q);
+			$request['types'] .= 's';
+			$search_ok = true;
+		} else {
+			if (!$search_ok) {
+				return array();
+
+			}
+		}
+		if (!$search_ok) {
+			return array();
+		}
 	}
 	return $request;
 }
@@ -87,7 +111,7 @@ function get_graphies_list($db) {
 		# no word
 		return array('status' => 'no_string');
 	}
-	$request = get_entries($db, $request);
+	$request = get_entries($db, $request, $pars);
 	if (array_key_exists('list', $request)) {
 		$output = $request;
 		$output['status'] = 'success';
