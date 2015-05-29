@@ -114,12 +114,11 @@ function selector(list, id) {
 }
 
 function anagrams() {
-	search_started();
 	var pars = get_form_pars();
 	var url = api + '?' + jQuery.param(pars);
 	console.log(url);
 	console.log(pars);
-	$.getJSON(url, function(data) {
+	var xhr = $.getJSON(url, function(data) {
 		search_ended();
 		if (data.status == 'success') {
 			console.log("Success");
@@ -133,20 +132,32 @@ function anagrams() {
 		search_ended();
 		console.log("Failed");
 	});
+	search_started(xhr);
 }
 
-function search_started() {
+function search_started(xhr) {
 	$("#results_num").empty();
 	$("#results").empty();
 	$("#error").empty();
 	$("#search_button")
-		.attr("disabled", "disabled")
+		.attr("value", "Interrompre")
 		.after($throbber);
+	$("#search").off().on("submit", function(e) {
+		e.preventDefault();
+		console.log("ABORT");
+		xhr.abort();
+		console.log("ABORTED");
+		search_ended();
+	});
 }
 
 function search_ended() {
 	$throbber.detach();
-	$("#search_button").removeAttr("disabled");
+	$("#search_button").attr( "value", "Chercher");
+	$("#search").off().on("submit", function(e) {
+		e.preventDefault();
+		anagrams();
+	});
 }
 
 function define_fields() {
@@ -181,7 +192,15 @@ function print_table(list) {
 	
 	list = prepare_list(list);
 	var fields = define_fields();
-	var tab = $("<table id='list'>");
+	
+	var tab = $("#list");
+	if (tab.length == 0) {
+		tab = $("<table id='list'>");
+		$("#results").append(tab);
+	} else {
+		tab.empty();
+	}
+	
 	// Header
 	var header = $("<tr>");
 	for (var i = 0; i < fields.length; i++) {
@@ -201,7 +220,6 @@ function print_table(list) {
 		}
 		tab.append(row);
 	}
-	$("#results").append(tab);
 }
 
 function prepare_list(list) {
