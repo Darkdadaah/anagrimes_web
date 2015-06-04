@@ -14,7 +14,7 @@ function clean_string($word) {
 	return str_replace('.', '?', $word);
 }
 function decide_search($pars, $nchars, $nkchars, $request) {
-	$str = clean_string($pars['string']);
+	$str = $pars['string'];
 	$title = 'a_title_flat';
 	$flat = true;
 	if (array_key_exists('noflat', $pars) and $pars['noflat'] == true) {
@@ -22,6 +22,7 @@ function decide_search($pars, $nchars, $nkchars, $request) {
 		$flat = false;
 	}
 	$catch = array();
+	$request['word'] .= $str;
 	# Exact same length? Exact search
 	if ($nchars == $nkchars) {
 		$q = $flat ? non_diacritique($str) : $str;
@@ -52,11 +53,11 @@ function decide_search($pars, $nchars, $nkchars, $request) {
 			$search_ok = true;
 		}
 		# Any letter between stars/interrogation mark?
-		if (preg_match("/[\*\?][^\*\?][\*\?]/", $str)) {
+		if (preg_match("/[*\?][^*\?]+[*\?]/", $str)) {
 			$search_ok = false;
 			$q = $flat ? non_diacritique($str) : $str;
-			$str = preg_replace('/\*/', '.+', $q);
-			$q = preg_replace('/\?/', '.', $q);
+			$q = str_replace('*', '.+', $q);
+			$q = str_replace('?', '.', $q);
 			$q = "^$q$";
 			array_push($request['conditions'], $title . " REGEXP ?");
 			array_push($request['values'], $q);
@@ -88,6 +89,7 @@ function get_graphies_list($db) {
 	
 	# Word?
 	if ($pars['string']) {
+		$pars['string'] = clean_string($pars['string']);
 		# Prepare search!
 		$flat = non_diacritique($pars['string']);
 		$char_count = strlen($flat);
