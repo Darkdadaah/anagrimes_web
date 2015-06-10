@@ -1,7 +1,7 @@
 // Anagrams
-var api = 'api.php';
+var api = '//tools.wmflabs.org/anagrimes/api.php';
 var wikturl = '//fr.wiktionary.org/wiki/';
-$throbber = $("<img src='style/Loading.gif' id='throbber'>");
+$throbber = $("<img src='//upload.wikimedia.org/wikipedia/commons/d/d2/Spinning_wheel_throbber.gif' id='throbber'>");
 
 var fnames = {
 	'title' : 'Mot',
@@ -95,16 +95,86 @@ var genres = {
 	'c' : 'commun',
 };
 
+var rows = {
+	'string' : {
+		'description': 'Recherche',
+		'type': 'text',
+	},
+	'search_type' : {
+		'description': 'Méthode',
+		'list': searchs
+	},
+	'lang' : {
+		'description': 'Langue',
+		'list': langs
+	},
+	'type' : {
+		'description': 'Type',
+		'list': types,
+	},
+	'genre' : {
+		'description': 'Genre',
+		'list': genres,
+	},
+	'flex' : {
+		'description': 'Inclure flexions',
+	},
+	'loc' : {
+		'description': 'Inclure locutions',
+	},
+	'gent' : {
+		'description': 'Inclure gentilés',
+	},
+	'noflat' : {
+		'description': 'Accents/majuscules',
+	},
+};
+
 function print_form() {
-	// Langs select
-	selector(langs, 'lang');
-	selector(types, 'type');
-	selector(searchs, 'search_type');
-	selector(genres, 'genre');
+	// Create the form
+	var form = $("<form action='' id='anag_form' />");
+	var tab = $("<div class='table' />");
+	form.append(tab);
+	
+	for (name in rows) {
+		tab.append( add_row(name, rows[name]) );
+	}
+	var submit = $("<input type='submit' value='Chercher' id='search_button' />");
+	form.append(submit);
+	
+	$("#anag_search")
+		.append(form)
+		.append( $("<div id='error'>") )
+		.append( $("<div id='results_num'>") )
+		.append( $("<div id='results'>") );
 }
 
-function selector(list, id) {
-	var sel = $("#" + id);
+function add_row(name, pars) {
+	var description = pars.description;
+	
+	var row = $("<div class='row' />");
+	var title = $("<div class='cell' />")
+		.append( description + '&nbsp;:' );
+	var input;
+	
+	if (pars.type && pars.type == 'text') {
+		input = $("<input type='text' name='" + name + "' id='" + name + "' />");
+	}
+	else if (pars.list) {
+		input = $("<select name='" + name + "' id='" + name + "'></select>");
+		selector(input, pars.list);
+	} else {
+		input = $("<input type='checkbox' name='" + name + "' id='" + name + "' />");
+	}
+	
+	var input_cell = $("<div class='cell' />")
+		.append( input );
+	
+	row.append(title).append(input_cell);
+	return row;
+}
+
+function selector(sel, list) {
 	for (var k in list) {
 		var opt = $("<option>");
 		opt.val(k);
@@ -142,7 +212,7 @@ function search_started(xhr) {
 	$("#search_button")
 		.attr("value", "Interrompre")
 		.after($throbber);
-	$("#search").off().on("submit", function(e) {
+	$("#anag_form").off().on("submit", function(e) {
 		e.preventDefault();
 		console.log("ABORT");
 		xhr.abort();
@@ -154,7 +224,7 @@ function search_started(xhr) {
 function search_ended() {
 	$throbber.detach();
 	$("#search_button").attr( "value", "Chercher");
-	$("#search").off().on("submit", function(e) {
+	$("#anag_form").off().on("submit", function(e) {
 		e.preventDefault();
 		anagrams();
 	});
@@ -292,10 +362,12 @@ function remove_all(pars) {
 }
 
 $(function() {
-	print_form();
-	$("#search").on("submit", function(e) {
-		e.preventDefault();
-		anagrams();
-	});
+	if ("#anag_search") {
+		print_form();
+		$("#anag_form").on("submit", function(e) {
+			e.preventDefault();
+			anagrams();
+		});
+	}
 });
 

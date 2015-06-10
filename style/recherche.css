@@ -1,39 +1,39 @@
 /* Default search style */
-.ulang, .utype {
+#anag_search .ulang, .utype {
 	font-style: italic;
 }
 
-table {
+#anag_search table {
 	border-collapse: collapse;
 }
 
-tr:nth-child(odd) {
+#anag_search tr:nth-child(odd) {
 	background: aliceblue;
 }
 
-td, th {
+#anag_search td, th {
 	padding: 5px;
 	text-align: center;
 	border-left: 1px solid #DDD;
 }
 
-th {
+#anag_search th {
 	background: #DDF;
 	border-left: 1px solid #AAA;
 }
 
-th:first-child, td:first-child {
+#anag_search th:first-child, td:first-child {
 	border: 0;
 }
 
-.table {
+#anag_search .table {
 	display: table;
 }
 
-.row {
+#anag_search .row {
 	display: table-row;
 }
 
-.cell {
+#anag_search .cell {
 	display: table-cell;
 }

@@ -10,52 +10,7 @@
 	<script type="text/javascript" src="js/search.js"></script>
 </head>
 <body>
-<form id="search" action="">
-<p>
-<div class="table">
-<div class="row">
-	<div class="cell"><label for="string">Recherche&nbsp;:</label></div>
-	<div class="cell"><input type="text" name="string" id="string" value="" /></div>
-</div>
-<div class="row">
-	<div class="cell">Méthode&nbsp;:</div>
-	<div class="celle"><select name="search_type" id="search_type"></select></div>
-</div>
-<div class="row">
-	<div class="cell">Langue&nbsp;:</div>
-	<div class="cell"><select name="lang" id="lang"></select></div>
-</div>
-<div class="row">
-	<div class="cell">Type de mot&nbsp;:</div>
-	<div class="cell"><select name="type" id="type"></select></div>
-</div>
-<div class="row">
-	<div class="cell">Genre&nbsp;:</div>
-	<div class="cell"><select name="genre" id="genre"></select></div>
-</div>
-<div class="row">
-	<div class="cell"><label for="flex">Inclure flexions&nbsp;:</label></div>
-	<div class="cell"><input type="checkbox" name="flex" id="flex" /></div>
-</div>
-<div class="row">
-	<div class="cell"><label for="loc">Inclure locutions&nbsp;:</label></div>
-	<div class="cell"><input type="checkbox" name="loc" id="loc" /></div>
-</div>
-<div class="row">
-	<div class="cell"><label for="gent">Inclure gentilés&nbsp;:</label></div>
-	<div class="cell"><input type="checkbox" name="gent" id="gent" /></div>
-</div>
-<div class="row">
-	<div class="cell"><label for="noflat">Prendre en compte<br>accents et majuscules&nbsp;:</label></div>
-	<div class="cell"><input type="checkbox" name="noflat" id="noflat" /></div>
-</div>
-</div>
-<br /><input type="submit" value="Chercher" id="search_button" />
-</p>
-</form>
-<div id="error"></div>
-<div id="results_num"></div>
-<div id="results"></div>
+<div id="anag_search"></div>
 </body>
 </html>
 
