@@ -1,4 +1,3 @@
-// Anagrams
 var api = '//tools.wmflabs.org/anagrimes/api.php';
 var wikturl = '//fr.wiktionary.org/wiki/';
 $throbber = $("<img src='//upload.wikimedia.org/wikipedia/commons/d/d2/Spinning_wheel_throbber.gif' id='throbber'>");
@@ -42,7 +41,6 @@ var langs = {
 	'is' : 'islandais',
 	'it' : 'italien',
 	'ja' : 'japonais',		// AUTRES SYSTÈMES D'ÉCRITURE
-	'es' : 'espagnol',
 	'ko' : 'coréen',		// AUTRES SYSTÈMES D'ÉCRITURE
 	'ko-Hani' : 'coréen (hanja)',	// AUTRES SYSTÈMES D'ÉCRITURE
 	'la' : 'latin',
@@ -63,7 +61,7 @@ var langs = {
 	'cs' : 'tchèque',
 	'tr' : 'turc',
 	'vi' : 'vietnamien',
-}
+};
 
 var types = {
 	'*' : '*',
@@ -74,13 +72,11 @@ var types = {
 	'adv' : 'adverbe',
 	'adj' : 'adjectif',
 	'adj-num' : 'adjectif numéral',
-	'adv' : 'adverbe',
 	'conj' : 'conjonction',
 	'interj' : 'interjection',
 	'prép' : 'préposition',
 	'prov' : 'proverbe',
 	'prenom' : 'prénom',
-	'verb' : 'verbe',
 	'onoma' : 'onomatopée',
 	'part' : 'particule',
 };
@@ -136,7 +132,7 @@ function print_form() {
 	var tab = $("<div class='table' />");
 	form.append(tab);
 	
-	for (name in rows) {
+	for (var name in rows) {
 		tab.append( add_row(name, rows[name]) );
 	}
 	var submit = $("<input type='submit' value='Chercher' id='search_button' />");
@@ -253,7 +249,7 @@ function print_error(data) {
 
 function print_table(list) {
 	var num = list.length;
-	if (num == 0) {
+	if (num === 0) {
 		$("#results_num").html("Pas de résultat");
 		return;
 	}
@@ -264,7 +260,7 @@ function print_table(list) {
 	var fields = define_fields();
 	
 	var tab = $("#list");
-	if (tab.length == 0) {
+	if (tab.length === 0) {
 		tab = $("<table id='list'>");
 		$("#results").append(tab);
 	} else {
@@ -353,7 +349,7 @@ function get_form_pars() {
 }
 
 function remove_all(pars) {
-	for (k in pars) {
+	for (var k in pars) {
 		if (pars[k] == '*') {
 			delete pars[k];
 		}
