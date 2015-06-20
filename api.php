@@ -1,10 +1,11 @@
 <?php
+include_once ( 'shared/common.php' ) ;
+
 # This file was shamelessly copied from expose-data/jsonapi.php by Rillke
 $tool_user_name = 'anagrimes';
 ini_set('log_errors', 1);
 ini_set('error_log','/data/project/anagrimes/logs/php.txt');
-
-include_once ( 'shared/common.php' ) ;
+error_reporting(E_ALL);
 #error_reporting( E_ALL & ~E_NOTICE ); # Don't clutter the directory with unhelpful stuff
 
 $prot = getProtocol();
@@ -62,6 +63,10 @@ if (isset($action)) {
 		case 'search':
 			include_once ( 'php/search.php' );
 			$res = get_graphies();
+			break;
+		case 'pron':
+			include_once ( 'php/pron.php' );
+			$res = get_prons();
 			break;
 		case 'random':
 			include_once ( 'php/random.php' );

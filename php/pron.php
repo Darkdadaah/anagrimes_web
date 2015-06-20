@@ -2,6 +2,8 @@
 require_once( 'lib_strings.php' );
 require_once( 'lib_requests.php' );
 
+$max = array();
+
 # Returns a list of graphies found with the string
 function get_list($db) {
 	$pars = get_string_pars($db);
@@ -30,7 +32,7 @@ function get_list($db) {
 			return array('status' => "2_chars_needed ($flat, ".$pars['string'] . ', '. known($pars['string']).", $char_count, $known_char_count)");
 		} else {
 			# Ok! search
-			$request = decide_search('a_title', $pars, $char_count, $known_char_count, $request);
+			$request = decide_search('p_pron', $pars, $char_count, $known_char_count, $request);
 			if (count($request) == 0) {
 				return array('status' => 'unsupported_search_type');
 			}
@@ -49,7 +51,7 @@ function get_list($db) {
 	}
 }
 
-function get_graphies() {
+function get_prons() {
 	$db = start_db();
 	return get_list($db);
 }

@@ -1,4 +1,6 @@
 <?php
+require_once( 'lib_strings.php' );
+
 function start_db() {
 	$mydbpars = parse_ini_file("/data/project/anagrimes/anagrimes.cnf");
 	$dbname = $mydbpars['dbname'];
@@ -83,7 +85,7 @@ function get_entries($db, $request, $pars) {
 	$fields = array("a_title", "l_genre", "l_is_flexion", "l_is_gentile", "l_is_locution", "l_lang", "l_num", "l_sigle", "l_type", "l_lexid", "p_num", "p_pron", "length(a_title_flat)");
 	$fields_txt = join(", ", $fields);
 	$table = 'entries';
-	if (isset($pars) and $pars['lang'] == 'fr' and !$pars['flex'] and !$pars['loc'] and !$pars['gent']) {
+	if (isset($pars) and isset($pars['lang']) and $pars['lang'] == 'fr' and !$pars['flex'] and !$pars['loc'] and !$pars['gent']) {
 		$table = 'entries_fr';
 	}
 	$query = "SELECT $fields_txt FROM $table";
@@ -154,6 +156,79 @@ function fuse_prons($list) {
 		$final_list[] = $lex;
 	}
 	return $final_list;
+}
+
+function known($word) {
+	return preg_replace('/[\?\*]+/', '', $word);
+}
+function count_known($word) {
+	return strlen(known($word));
+}
+function clean_string($word) {
+	return str_replace('.', '?', $word);
+}
+function decide_search($column, $pars, $nchars, $nkchars, $request) {
+	$str = $pars['string'];
+	$title = $column . '_flat';
+	$flat = true;
+	if (array_key_exists('noflat', $pars) and $pars['noflat'] == true) {
+		$title = $column;
+		$flat = false;
+	}
+	$catch = array();
+	$request['word'] = $str;
+	# Exact same length? Exact search
+	if ($nchars == $nkchars) {
+		$q = $flat ? non_diacritique($str) : $str;
+		error_log("$str -> $q");
+		array_push($request['conditions'], "$title=?");
+		array_push($request['values'], $q);
+		$request['types'] .= "s";
+	} else {
+		if (preg_match("/\?/", $str) && !preg_match("/\*/", $str)) {
+			array_push($request['conditions'], "length($title)=$nchars");
+		}
+		$search_ok = false;
+		# Include one incomplete part at the end?
+		if (preg_match("/^([^*\?]+)[*\?]+/", $str, $catch)) {
+			$q = $flat ? non_diacritique($catch[1]) : $catch[1];
+			$q .= "%";
+			array_push($request['conditions'], "$title LIKE ?");
+			array_push($request['values'], $q);
+			$request['types'] .= 's';
+			$search_ok = true;
+		}
+		# Include one incomplete part at the start?
+		if (preg_match("/[*\?]+([^*\?]+)+$/", $str, $catch)) {
+			$q = $flat ? utf8_strrev(non_diacritique($catch[1])) : utf8_strrev($catch[1]);
+			$q .= "%";
+			array_push($request['conditions'], $title . "_r LIKE ?");
+			array_push($request['values'], $q);
+			$request['types'] .= 's';
+			$search_ok = true;
+		}
+		# Any single letter: regex
+		if (preg_match("/\?/", $str)) {
+			$search_ok = false;
+			$q = $flat ? non_diacritique($str) : $str;
+			$q = str_replace('*', '.*', $q);
+			$q = str_replace('?', '.', $q);
+			$q = "^$q$";
+			array_push($request['conditions'], $title . " REGEXP ?");
+			array_push($request['values'], $q);
+			$request['types'] .= 's';
+			$search_ok = true;
+		} else {
+			if (!$search_ok) {
+				return array();
+
+			}
+		}
+		if (!$search_ok) {
+			return array();
+		}
+	}
+	return $request;
 }
 ?>
 
