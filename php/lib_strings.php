@@ -29,4 +29,25 @@ function non_diacritique_full($graphie) {
 	$graphie = preg_replace('/\pM|\pP/u', "", $graphie);
 	return $graphie;
 }
+
+function known($word) {
+	return preg_replace('/[\?\*]+/', '', $word);
+
+}
+function count_known($word) {
+	return strlen(known($word));
+
+}
+function clean_string($word) {
+	return str_replace('.', '?', $word);
+}
+
+function clean_pron($word) {
+	$word = clean_string($word);
+	$word = str_replace(array(' ', '_', '‿'), '', $word);
+	// X-SAMPA -> API (except for r, special)
+	$from = array('é', 'è', 'ê', 'ô', 'â', 'g', 'ʁ', 'R', 'Z', 'A', 'O', 'E', '@', 'S', 'H', '~', 'N', 'J', '2', '9', 'T', 'D', 'V', 'I', 'U', '{');
+	$to =   array('e', 'ɛ', 'ɛ', 'o', 'ɑ', 'ɡ', 'r', 'r', 'ʒ', 'ɑ', 'ɔ', 'ɛ', 'ə', 'ʃ', 'ɥ', '̃' , 'ŋ', 'ɲ', 'ø', 'œ', 'θ', 'ð', 'ʌ', 'ɪ', 'ʊ', 'æ');	// '
+	return str_replace($from, $to, $word);
+}
 ?>

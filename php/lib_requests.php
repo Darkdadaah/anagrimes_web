@@ -158,21 +158,6 @@ function fuse_prons($list) {
 	return $final_list;
 }
 
-function known($word) {
-	return preg_replace('/[\?\*]+/', '', $word);
-}
-function count_known($word) {
-	return strlen(known($word));
-}
-function clean_string($word) {
-	return str_replace('.', '?', $word);
-}
-function clean_pron($word) {
-	$word = clean_string($word);
-	$from = array('g', 'ʁ');
-	$to = array('ɡ', 'r');
-	return str_replace($from, $to, $word);
-}
 function decide_search($column, $pars, $nchars, $nkchars, $request) {
 	$str = $pars['string'];
 	$title = $column . '_flat';
