@@ -12,6 +12,7 @@ var fnames = {
 
 var searchs = {
 	'search' : 'Graphie',
+	'pron' : 'Prononciation',
 	'anagram' : 'Anagrammes',
 };
 
