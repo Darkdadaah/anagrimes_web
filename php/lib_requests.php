@@ -167,12 +167,23 @@ function count_known($word) {
 function clean_string($word) {
 	return str_replace('.', '?', $word);
 }
+function clean_pron($word) {
+	$word = clean_string($word);
+	$from = array('g', 'ʁ');
+	$to = array('ɡ', 'r');
+	return str_replace($from, $to, $word);
+}
 function decide_search($column, $pars, $nchars, $nkchars, $request) {
 	$str = $pars['string'];
 	$title = $column . '_flat';
 	$flat = true;
 	if (array_key_exists('noflat', $pars) and $pars['noflat'] == true) {
 		$title = $column;
+		$flat = false;
+	}
+	// Prons: only use "flat" column, without removing diacritics
+	if ($column == 'p_pron') {
+		$title = $column . '_flat';
 		$flat = false;
 	}
 	$catch = array();

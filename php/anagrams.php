@@ -24,7 +24,7 @@ function get_anagrams_list($db) {
 	$anagrams = array();
 	if (!isset($pars['string']) || $pars['string'] == '') {
 		return array(
-			'status' => 'no_parameters',
+			'status' => 'empty_request',
 		);
 	}
 	

@@ -9,7 +9,7 @@ function get_list($db) {
 	$pars = get_string_pars($db);
 	$words = array();
 	if (!isset($pars['string']) || $pars['string'] == '') {
-		return $words;
+		return array('status' => 'empty_request');
 	}
 	
 	# Prepare request from parameters
@@ -17,7 +17,7 @@ function get_list($db) {
 	
 	# Word?
 	if ($pars['string']) {
-		$pars['string'] = clean_string($pars['string']);
+		$pars['string'] = clean_pron($pars['string']);
 		# Prepare search!
 		$flat = non_diacritique($pars['string']);
 		$char_count = strlen($flat);

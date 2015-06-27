@@ -1,4 +1,5 @@
 var api = '//tools.wmflabs.org/anagrimes/api.php';
+var devapi = '//tools.wmflabs.org/anagrimes/dev/api.php';
 var wikturl = '//fr.wiktionary.org/wiki/';
 $throbber = $("<img src='//upload.wikimedia.org/wikipedia/commons/d/d2/Spinning_wheel_throbber.gif' id='throbber'>");
 
@@ -125,6 +126,9 @@ var rows = {
 	'noflat' : {
 		'description': 'Accents/majuscules',
 	},
+	'dev' : {
+		'description': 'Version dev',
+	},
 };
 
 function print_form() {
@@ -180,26 +184,31 @@ function selector(sel, list) {
 	}
 }
 
-function anagrams() {
+function anagrimes() {
 	var pars = get_form_pars();
-	var url = api + '?' + jQuery.param(pars);
+	var dev = $("#dev").is(":checked") ? true : false;
+	var url = dev ? devapi : api;
 	console.log(url);
 	console.log(pars);
-	var xhr = $.getJSON(url, function(data) {
-		search_ended();
-		if (data.status == 'success') {
-			console.log("Success");
-			print_table(data.list);
-			console.log(data);
-		} else {
-			console.log("Error...");
-			print_error(data);
-		}
-	}).fail(function(e) {
-		search_ended();
-		console.log("Failed");
-	});
-	search_started(xhr);
+	if (!pars["string"] || pars.string == '') {
+		print_error({'status' : "Empty search"});
+	} else {
+		var xhr = $.getJSON(url, pars, function(data) {
+			search_ended();
+			if (data.status == 'success') {
+				console.log("Success");
+				print_table(data.list);
+				console.log(data);
+			} else {
+				console.log("Error...");
+				print_error(data);
+			}
+		}).fail(function(e) {
+			search_ended();
+			console.log("Failed");
+		});
+		search_started(xhr);
+	}
 }
 
 function search_started(xhr) {
@@ -223,7 +232,7 @@ function search_ended() {
 	$("#search_button").attr( "value", "Chercher");
 	$("#anag_form").off().on("submit", function(e) {
 		e.preventDefault();
-		anagrams();
+		anagrimes();
 	});
 }
 
@@ -363,7 +372,7 @@ $(function() {
 		print_form();
 		$("#anag_form").on("submit", function(e) {
 			e.preventDefault();
-			anagrams();
+			anagrimes();
 		});
 	}
 });
