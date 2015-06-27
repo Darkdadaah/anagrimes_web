@@ -358,7 +358,7 @@ function remove_all(pars) {
 }
 
 $(function() {
-	if ("#anag_search") {
+	if ( $("#anag_search") ) {
 		print_form();
 		$("#anag_form").on("submit", function(e) {
 			e.preventDefault();
