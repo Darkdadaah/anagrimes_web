@@ -144,12 +144,12 @@ function print_form() {
 		tab.append( add_row(name, rows[name]) );
 	}
 	var submit = $("<input type='submit' value='Chercher' id='search_button' />");
-	form.append(submit);
+	form.append(submit)
+		.append( $("<div id='error'>") )
+		.append( $("<div id='results_num'>") );
 	
 	$("#anag_search")
 		.append(form)
-		.append( $("<div id='error'>") )
-		.append( $("<div id='results_num'>") )
 		.append( $("<div id='results'>") );
 }
 
@@ -189,11 +189,10 @@ function selector(sel, list) {
 
 function anagrimes() {
 	var pars = get_form_pars();
-	var dev = $("#dev").is(":checked") ? true : false;
 	var url = pars.dev ? devapi : api;
 	console.log(url + '?' + $.param(pars));
 	console.log(pars);
-	if (!pars["string"] || pars.string == '') {
+	if (!pars.string || pars.string === '') {
 		print_error({'status' : "Empty search"});
 	} else {
 		var xhr = $.getJSON(url, pars, function(data) {

@@ -1,4 +1,15 @@
 /* Default search style */
+#anag_search form {
+	display: inline-block;
+	margin-right: 20px;
+	vertical-align: top;
+}
+
+#anag_search #results {
+	display: inline-block;
+	vertical-align: top;
+}
+
 #anag_search .ulang, .utype {
 	font-style: italic;
 }
