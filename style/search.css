@@ -59,3 +59,14 @@
 #anag_search .cell {
 	display: table-cell;
 }
+
+#anag_search #advanced_button {
+	border: 1px solid #DDD;
+	padding: 3px;
+	cursor: pointer; cursor: hand;
+}
+
+#anag_search .arrow {
+	color: gray;
+}
+

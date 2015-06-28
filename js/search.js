@@ -106,31 +106,43 @@ var rows = {
 		'description': 'Langue',
 		'list': langs
 	},
+	'advanced' : {
+		'description': 'Options avancées',
+		'type': 'advanced_button',
+	},
 	'type' : {
 		'description': 'Type',
 		'list': types,
+		'advanced': true,
 	},
 	'genre' : {
 		'description': 'Genre',
 		'list': genres,
+		'advanced': true,
 	},
 	'flex' : {
 		'description': 'Inclure flexions',
+		'advanced': true,
 	},
 	'loc' : {
 		'description': 'Inclure locutions',
+		'advanced': true,
 	},
 	'nom-pr' : {
 		'description': 'Inclure noms propres',
+		'advanced': true,
 	},
 	'gent' : {
 		'description': 'Inclure gentilés',
+		'advanced': true,
 	},
 	'noflat' : {
 		'description': 'Accents/majuscules',
+		'advanced': true,
 	},
 	'dev' : {
 		'description': 'Version dev',
+		'advanced': true,
 	},
 };
 
@@ -157,23 +169,51 @@ function add_row(name, pars) {
 	var description = pars.description;
 	
 	var row = $("<div class='row' />");
-	var title = $("<div class='cell' />")
-		.append( description + '&nbsp;:' );
-	var input;
+	var title;
+	var input_cell;
 	
-	if (pars.type && pars.type == 'text') {
-		input = $("<input type='text' name='" + name + "' id='" + name + "' />");
-	}
-	else if (pars.list) {
-		input = $("<select name='" + name + "' id='" + name + "'></select>");
-		selector(input, pars.list);
+	// Create advanced menu button
+	if (pars.type == 'advanced_button') {
+		var goback = $('<span class="arrow">←</span>');
+		var gotow = $('<span class="arrow">→</span>');
+		goback.hide();
+		row.attr('id', 'advanced_button');
+		title = $("<div class='cell' />")
+			.append( description + "&nbsp;" );
+		input_cell = $("<div class='cell' />")
+			.append( gotow )
+			.append( goback );
+		row.on("click", function() {
+			$(".advanced").toggle();
+			goback.toggle();
+			gotow.toggle();
+		});
+	// Create inputs
 	} else {
-		input = $("<input type='checkbox' name='" + name + "' id='" + name + "' />");
+		var title = $("<div class='cell' />")
+			.append( description + '&nbsp;:' );
+		var input;
+		
+		// Text inputs
+		if (pars.type && pars.type == 'text') {
+			input = $("<input type='text' name='" + name + "' id='" + name + "' />");
+		}
+		// List selection inputs
+		else if (pars.list) {
+			input = $("<select name='" + name + "' id='" + name + "'></select>");
+			selector(input, pars.list);
+		// Checkbox inputs (default if no type)
+		} else {
+			input = $("<input type='checkbox' name='" + name + "' id='" + name + "' />");
+		}
+		var input_cell = $("<div class='cell' />")
+			.append( input );
 	}
-	
-	var input_cell = $("<div class='cell' />")
-		.append( input );
-	
+	// Advanced options are hidden by default
+	if (pars.advanced) {
+		row.addClass('advanced');
+		row.hide();
+	}
 	row.append(title).append(input_cell);
 	return row;
 }
@@ -298,6 +338,10 @@ function print_table(list) {
 		}
 		tab.append(row);
 	}
+	// Focus on the results
+	$("html, body").animate({
+		scrollTop: $("#results_num").offset().top - 10
+	}, 500);
 }
 
 function prepare_list(list) {
