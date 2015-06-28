@@ -5,19 +5,32 @@
 	margin-bottom: 15px;
 	vertical-align: top;
 }
-#anag_search #results_num {
-	margin-top: 15px;
-}
-
 #anag_search #results {
 	display: inline-block;
 	vertical-align: top;
+}
+
+#anag_search #string {
+	font-size: 1.5em;
+	font-family: monospace;
 }
 
 #anag_search .ulang, .utype {
 	font-style: italic;
 }
 
+#anag_search #advanced_button {
+	border: 1px solid #DDD;
+	padding: 3px;
+	cursor: pointer; cursor: hand;
+}
+
+#anag_search .arrow {
+	color: gray;
+}
+
+
+/* Result list table */
 #anag_search table {
 	border-collapse: collapse;
 }
@@ -59,14 +72,3 @@
 #anag_search .cell {
 	display: table-cell;
 }
-
-#anag_search #advanced_button {
-	border: 1px solid #DDD;
-	padding: 3px;
-	cursor: pointer; cursor: hand;
-}
-
-#anag_search .arrow {
-	color: gray;
-}
-

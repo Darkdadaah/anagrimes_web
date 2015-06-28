@@ -157,12 +157,14 @@ function print_form() {
 	}
 	var submit = $("<input type='submit' value='Chercher' id='search_button' />");
 	form.append(submit)
-		.append( $("<div id='error'>") )
-		.append( $("<div id='results_num'>") );
+		.append( $("<div id='error'>") );
 	
 	$("#anag_search")
 		.append(form)
 		.append( $("<div id='results'>") );
+	$("#results")
+		.append( $("<div id='results_num'>") )
+		.append( $("<div id='list'>") );
 }
 
 function add_row(name, pars) {
@@ -255,7 +257,7 @@ function anagrimes() {
 
 function search_started(xhr) {
 	$("#results_num").empty();
-	$("#results").empty();
+	$("#list").empty();
 	$("#error").empty();
 	$("#search_button")
 		.attr("value", "Interrompre")
