@@ -203,7 +203,7 @@ function decide_search($column, $pars, $nchars, $nkchars, $request) {
 			$search_ok = true;
 		}
 		# Otherwise: regexp
-		else {
+		if (preg_match("/[*\?]/", $str)) {
 			$search_ok = false;
 			$q = $flat ? non_diacritique($str) : $str;
 			$q = str_replace('*', '.*', $q);
