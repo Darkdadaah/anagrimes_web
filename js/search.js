@@ -306,7 +306,7 @@ function prepare_list(list) {
 		var l = list[i];
 		l.title = wikilink(l);
 		if (l.p_pron) {
-			l.pron = "/" + l.pront.join("/ <small>ou</small> /") + "/";
+			l.pron = "\\" + l.pront.join("\\ <small>ou</small> \\") + "\\";
 		} else {
 			l.pron = "";
 		}
