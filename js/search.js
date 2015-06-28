@@ -107,7 +107,7 @@ var rows = {
 		'list': langs
 	},
 	'advanced' : {
-		'description': 'Options avancées',
+		'description': 'Options...',
 		'type': 'advanced_button',
 	},
 	'type' : {
@@ -192,7 +192,7 @@ function add_row(name, pars) {
 		});
 	// Create inputs
 	} else {
-		var title = $("<div class='cell' />")
+		title = $("<div class='cell' />")
 			.append( description + '&nbsp;:' );
 		var input;
 		
@@ -208,7 +208,7 @@ function add_row(name, pars) {
 		} else {
 			input = $("<input type='checkbox' name='" + name + "' id='" + name + "' />");
 		}
-		var input_cell = $("<div class='cell' />")
+		input_cell = $("<div class='cell' />")
 			.append( input );
 	}
 	// Advanced options are hidden by default
