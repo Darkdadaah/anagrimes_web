@@ -2,7 +2,11 @@
 #anag_search form {
 	display: inline-block;
 	margin-right: 20px;
+	margin-bottom: 15px;
 	vertical-align: top;
+}
+#anag_search #results_num {
+	margin-top: 15px;
 }
 
 #anag_search #results {
@@ -22,19 +26,26 @@
 	background: aliceblue;
 }
 
+#anag_search th {
+	background: #DDF;
+	border-left: 1px solid #AAA;
+	border-top: 1px solid #DDD;
+}
+
 #anag_search td, th {
 	padding: 5px;
 	text-align: center;
 	border-left: 1px solid #DDD;
 }
 
-#anag_search th {
-	background: #DDF;
-	border-left: 1px solid #AAA;
+#anag_search th:first-child {
+	border-left: 1px solid #DDD;
 }
-
-#anag_search th:first-child, td:first-child {
-	border: 0;
+#anag_search td:last-child {
+	border-right: 1px solid #DDD;
+}
+#anag_search tr:last-child td {
+	border-bottom: 1px solid #DDD;
 }
 
 #anag_search .table {
