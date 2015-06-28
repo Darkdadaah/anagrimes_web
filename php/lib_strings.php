@@ -21,12 +21,14 @@ function utf8_length($str) {
 function non_diacritique($graphie) {
 	$graphie = Normalizer::normalize($graphie, Normalizer::FORM_D);
 	$graphie = preg_replace('/\pM|\-/u', "", $graphie);
+	$graphie = utf8_strtolower($graphie);
 	return $graphie;
 }
 
 function non_diacritique_full($graphie) {
 	$graphie = Normalizer::normalize($graphie, Normalizer::FORM_D);
 	$graphie = preg_replace('/\pM|\pP/u', "", $graphie);
+	$graphie = utf8_strtolower($graphie);
 	return $graphie;
 }
 
