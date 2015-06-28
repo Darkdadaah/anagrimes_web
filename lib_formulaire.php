@@ -2,7 +2,7 @@
 	//ini_set('log_errors',1);
 	//ini_set('error_log','/home/darkdadaah/logs/php.txt');
 	require_once('lib_listes.php');
-	require_once('php/lib_chaines.php');
+	require_once('lib_chaines.php');
 	
 	function menu($var, $name, $all_names) {
 		global $types;
