@@ -120,6 +120,9 @@ var rows = {
 	'loc' : {
 		'description': 'Inclure locutions',
 	},
+	'nom-pr' : {
+		'description': 'Inclure noms propres',
+	},
 	'gent' : {
 		'description': 'Inclure gentilés',
 	},
@@ -187,8 +190,8 @@ function selector(sel, list) {
 function anagrimes() {
 	var pars = get_form_pars();
 	var dev = $("#dev").is(":checked") ? true : false;
-	var url = dev ? devapi : api;
-	console.log(url);
+	var url = pars.dev ? devapi : api;
+	console.log(url + '?' + $.param(pars));
 	console.log(pars);
 	if (!pars["string"] || pars.string == '') {
 		print_error({'status' : "Empty search"});
@@ -352,7 +355,9 @@ function get_form_pars() {
 		'flex' : $("#flex").is(':checked'),
 		'loc' : $("#loc").is(':checked'),
 		'gent' : $("#gent").is(':checked'),
+		'nom-pr' : $("#nom-pr").is(':checked'),
 		'noflat' : $("#noflat").is(':checked'),
+		'dev' : $("#dev").is(':checked'),
 	};
 	fpars = remove_all(fpars);
 	return fpars;

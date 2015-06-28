@@ -13,7 +13,7 @@ function get_string_pars($db) {
 	$pars = array();
 
 	$text = array("string", "lang", "type", "genre");
-	$bool = array("flex", "loc", "gent", "noflat");
+	$bool = array("flex", "loc", "gent", "nom-pr", "noflat", "dev");
 
 	for ($i = 0; $i < count($text); $i++) {
 		if (isset( $_GET[ $text[$i] ] )) {
@@ -36,7 +36,8 @@ function new_request($db, $pars) {
 	$request = array(
 		'conditions' => array(),
 		'values' => array(),
-		'types' => ''
+		'types' => '',
+		'pars' => $pars
 	);
 	
 	# Language? Default: all
@@ -70,10 +71,8 @@ function new_request($db, $pars) {
 		array_push($request['conditions'], "l_is_gentile=FALSE");
 	}
 	# Nom propre
-	if (isset($pars['nom-pr'])) {
-		if ($pars['nom-pr'] == true) {
-			array_push($request['conditions'], "(l_type='nom-pr' OR l_type='prenom' OR l_type='nom-fam')");
-		} else {
+	if (!array_key_exists('nom-pr', $pars) or $pars['nom-pr'] == false) {
+		if ($pars['type'] != 'nom-pr' && $pars['type'] != 'prenom' && $pars['type'] != 'nom-fam') {
 			array_push($request['conditions'], "(NOT l_type='nom-pr' AND NOT l_type='prenom' AND NOT l_type='nom-fam')");
 		}
 	}
@@ -203,8 +202,8 @@ function decide_search($column, $pars, $nchars, $nkchars, $request) {
 			$request['types'] .= 's';
 			$search_ok = true;
 		}
-		# Any single letter: regex
-		if (preg_match("/\?/", $str)) {
+		# Otherwise: regexp
+		else {
 			$search_ok = false;
 			$q = $flat ? non_diacritique($str) : $str;
 			$q = str_replace('*', '.*', $q);
@@ -214,11 +213,6 @@ function decide_search($column, $pars, $nchars, $nkchars, $request) {
 			array_push($request['values'], $q);
 			$request['types'] .= 's';
 			$search_ok = true;
-		} else {
-			if (!$search_ok) {
-				return array();
-
-			}
 		}
 		if (!$search_ok) {
 			return array();
