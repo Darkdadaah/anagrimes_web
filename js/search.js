@@ -340,10 +340,6 @@ function print_table(list) {
 		}
 		tab.append(row);
 	}
-	// Focus on the results
-	$("html, body").animate({
-		scrollTop: $("#results_num").offset().top - 10
-	}, 500);
 }
 
 function prepare_list(list) {
