@@ -24,12 +24,16 @@ function get_list($db) {
 		$known_char_count = count_known($flat);
 
 		# Enough chars to search?
-		# Length 1 or 2: at least 1 char
-		# Length 3+ : at least 2 chars
+		# Length 1 or 3: at least 1 char
+		# Length 3+: at least 2 chars
 		if ($char_count == 0) {
 			return array('status' => 'no_char');
-		} elseif ($char_count > 2 and $known_char_count <= 1) {
-			return array('status' => "2_chars_needed ($flat, ".$pars['string'] . ', '. known($pars['string']).", $char_count, $known_char_count)");
+		} elseif ($known_char_count == 0) {
+			return array('status' => "char_needed");
+		} elseif ($char_count > 3 and $known_char_count <= 1) {
+			return array('status' => "2_chars_needed");
+		} elseif ($char_count <= 3 && $known_char_count <= 1 && preg_match("/\*/", $flat)) {
+			return array('status' => "3_chars_no_joker");
 		} else {
 			# Ok! search
 			$request = decide_search('p_pron', $pars, $char_count, $known_char_count, $request);
