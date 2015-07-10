@@ -2,7 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="fr">
 
 <head>
-	<title>Anagrammes</title>
+	<title><?php if (isset($_GET['mot'])) { echo $_GET['mot'] . " - "; } ?>Anagrammes</title>
 	<meta http-equiv="Content-Type" content="text/HTML; charset=utf-8" />
 	<link rel="stylesheet" type="text/css" media="all" href="style/default.css" />
 	<link rel="stylesheet" type="text/css" media="print" href="style/print.css" />
