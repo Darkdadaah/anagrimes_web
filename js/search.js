@@ -275,6 +275,7 @@ function search_ended() {
 	$throbber.detach();
 	$("#search_button").attr( "value", "Chercher");
 	$("#anag_form").off().on("submit", function(e) {
+		$("#anag_form input").blur();
 		e.preventDefault();
 		anagrimes();
 	});
@@ -417,6 +418,7 @@ $(function() {
 	if ( $("#anag_search") ) {
 		print_form();
 		$("#anag_form").on("submit", function(e) {
+			$("#anag_form input").blur();
 			e.preventDefault();
 			anagrimes();
 		});

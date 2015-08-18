@@ -8,6 +8,8 @@
 #anag_search #results {
 	display: inline-block;
 	vertical-align: top;
+	overflow: auto;
+	width: 100%;
 }
 
 #anag_search #string {
