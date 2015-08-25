@@ -91,7 +91,9 @@ function get_entries($db, $request, $pars) {
 	if (count($request['conditions']) > 0) {
 		$query = $query . " WHERE " . join(" AND ", $request['conditions']);
 	}
-	$query .= " ORDER BY a_title_flat, a_title, l_lang, l_type, l_num";
+	if ($request['order']) {
+		$query .= " ORDER BY " . $request['order'];
+	}
 	$list = array();
 	
 	if ($st = $db->prepare($query)) {
@@ -161,6 +163,11 @@ function decide_search($column, $pars, $nchars, $nkchars, $request) {
 	$str = $pars['string'];
 	$title = $column . '_flat';
 	$flat = true;
+	$orders = array(
+		'pron' => 'p_pron_flat, p_pron, l_lang, a_title, l_type, l_num',
+		'pron_r' => 'p_pron_flat_r, p_pron, l_lang, a_title, l_type, l_num',
+		'article' => 'a_title_flat, a_title, l_lang, l_type, l_num'
+	);
 	if (array_key_exists('noflat', $pars) and $pars['noflat'] == true) {
 		$title = $column;
 		$flat = false;
@@ -172,6 +179,7 @@ function decide_search($column, $pars, $nchars, $nkchars, $request) {
 	}
 	$catch = array();
 	$request['word'] = $str;
+	$rhyme = false;
 	# Exact same length? Exact search
 	if ($nchars == $nkchars) {
 		$q = $flat ? non_diacritique($str) : $str;
@@ -184,15 +192,6 @@ function decide_search($column, $pars, $nchars, $nkchars, $request) {
 			array_push($request['conditions'], "length($title)=$nchars");
 		}
 		$search_ok = false;
-		# Include one incomplete part at the end?
-		if (preg_match("/^([^*\?]+)[*\?]+/", $str, $catch)) {
-			$q = $flat ? non_diacritique($catch[1]) : $catch[1];
-			$q .= "%";
-			array_push($request['conditions'], "$title LIKE ?");
-			array_push($request['values'], $q);
-			$request['types'] .= 's';
-			$search_ok = true;
-		}
 		# Include one incomplete part at the start?
 		if (preg_match("/[*\?]+([^*\?]+)+$/", $str, $catch)) {
 			$q = $flat ? utf8_strrev(non_diacritique($catch[1])) : utf8_strrev($catch[1]);
@@ -201,6 +200,17 @@ function decide_search($column, $pars, $nchars, $nkchars, $request) {
 			array_push($request['values'], $q);
 			$request['types'] .= 's';
 			$search_ok = true;
+			$rhyme = true;
+		}
+		# Include one incomplete part at the end?
+		if (preg_match("/^([^*\?]+)[*\?]+/", $str, $catch)) {
+			$q = $flat ? non_diacritique($catch[1]) : $catch[1];
+			$q .= "%";
+			array_push($request['conditions'], "$title LIKE ?");
+			array_push($request['values'], $q);
+			$request['types'] .= 's';
+			$search_ok = true;
+			$rhyme = false;
 		}
 		# Otherwise: regexp
 		if (preg_match("/[*\?]/", $str)) {
@@ -217,6 +227,17 @@ function decide_search($column, $pars, $nchars, $nkchars, $request) {
 		if (!$search_ok) {
 			return array();
 		}
+	}
+	# Choose order
+	if ($column == 'p_pron') {
+		$request['rhyme'] = $rhyme;
+		if ($rhyme) {
+			$request['order'] = $orders['pron_r'];
+		} else {
+			$request['order'] = $orders['pron'];
+		}
+	} else {
+		$request['order'] = $orders['article'];
 	}
 	return $request;
 }
