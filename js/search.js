@@ -140,6 +140,10 @@ var rows = {
 		'description': 'Accents/majuscules',
 		'advanced': true,
 	},
+	'without_pron' : {
+		'description': 'Sans prononciation',
+		'advanced': true,
+	},
 	'dev' : {
 		'description': 'Version dev',
 		'advanced': true,
@@ -399,6 +403,7 @@ function get_form_pars() {
 		'gent' : $("#gent").is(':checked'),
 		'nom-pr' : $("#nom-pr").is(':checked'),
 		'noflat' : $("#noflat").is(':checked'),
+		'without_pron' : $("#without_pron").is(':checked'),
 		'dev' : $("#dev").is(':checked'),
 	};
 	fpars = remove_all(fpars);

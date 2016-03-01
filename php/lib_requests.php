@@ -13,7 +13,7 @@ function get_string_pars($db) {
 	$pars = array();
 
 	$text = array("string", "lang", "type", "genre");
-	$bool = array("flex", "loc", "gent", "nom-pr", "noflat", "dev");
+	$bool = array("flex", "loc", "gent", "nom-pr", "noflat", "without_pron", "dev");
 
 	for ($i = 0; $i < count($text); $i++) {
 		if (isset( $_GET[ $text[$i] ] )) {
@@ -61,6 +61,10 @@ function new_request($db, $pars) {
 	# Flexion
 	if (!array_key_exists('flex', $pars) or $pars['flex'] == false) {
 		array_push($request['conditions'], "l_is_flexion=FALSE");
+	}
+	# With or without prononciation
+	if (array_key_exists('without_pron', $pars) and $pars['without_pron'] == true) {
+		array_push($request['conditions'], "p_pron IS NULL");
 	}
 	# Locution
 	if (!array_key_exists('loc', $pars) or $pars['loc'] == false) {
