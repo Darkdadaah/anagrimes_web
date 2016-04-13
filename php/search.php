@@ -31,13 +31,18 @@ function get_list($db) {
 		} elseif ($char_count > 3 and $known_char_count <= 1) {
 			return array('status' => "2_chars_needed");
 		} elseif ($char_count <= 3 && $known_char_count <= 1 && preg_match("/\*/", $flat)) {
-			return array('status' => "3_chars_no_joker");
-		} else {
-			# Ok! search
-			$request = decide_search('a_title', $pars, $char_count, $known_char_count, $request);
-			if (count($request) == 0) {
-				return array('status' => 'unsupported_search_type');
+			# Exception: French words without pron (only if first char is defined)
+			if (array_key_exists('without_pron', $pars) and $pars['without_pron'] == true and $pars['lang'] and !preg_match('/^[\*\?\.]/', $pars['string'])) {
+				# Continue!
 			}
+			else {
+				return array('status' => "3_chars_no_joker");
+			}
+		}
+		# Ok! search
+		$request = decide_search('a_title', $pars, $char_count, $known_char_count, $request);
+		if (count($request) == 0) {
+			return array('status' => 'unsupported_search_type');
 		}
 	} else {
 		# no word
