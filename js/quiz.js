@@ -35,7 +35,6 @@ var langues = {
 	'ja' : 'japonais',		// AUTRES SYSTÈMES D'ÉCRITURE
 	'es' : 'espagnol',
 	'ko' : 'coréen',		// AUTRES SYSTÈMES D'ÉCRITURE
-	'ko-Hani' : 'coréen (hanja)',	// AUTRES SYSTÈMES D'ÉCRITURE
 	'la' : 'latin',
 	'ln' : 'lingala',
 	'mn' : 'mongol',	// ALPHABET CYRILLIQUE
@@ -286,7 +285,7 @@ function show_answer(data) {
 	answered = true;
 }
 
-function check_answer(data) {
+function check_answer(lang) {
 	if (answered) {
 		return;
 	}
@@ -301,7 +300,7 @@ function check_answer(data) {
 		$('#answerbox').show();
 		show_answer();
 	} else {
-		$('#answerbox').html('Mauvaise réponse&nbsp;:&nbsp;').append($(wikt_link(answer)));
+		$('#answerbox').html('Mauvaise réponse&nbsp;:&nbsp;').append($(wikt_link(answer, lang)));
 		$('#answerbox').show();
 	}
 }
@@ -320,12 +319,12 @@ $(function() {
 		event.preventDefault();
 	});
 	$('#checkbutton').click(function(event) {
-		check_answer();
+		check_answer(lang);
 		event.preventDefault();
 	});
 	$('#answer').keypress(function (e) {
 		if (e.which == 13) {
-			check_answer();
+			check_answer(lang);
 			e.preventDefault();
 		}
 	});
