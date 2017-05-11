@@ -144,6 +144,10 @@ var rows = {
 		'description': 'Sans prononciation',
 		'advanced': true,
 	},
+	'wikilist' : {
+		'description': 'Format wikitexte',
+		'advanced': true,
+	},
 	'dev' : {
 		'description': 'Version dev',
 		'advanced': true,
@@ -245,7 +249,11 @@ function anagrimes() {
 			search_ended();
 			if (data.status == 'success') {
 				console.log("Success");
-				print_table(data.list);
+                if (pars.wikilist) {
+    				print_wikilist(data.list);
+                } else {
+    				print_table(data.list);
+                }
 				console.log(data);
 			} else {
 				console.log("Error...");
@@ -347,6 +355,39 @@ function print_table(list) {
 	}
 }
 
+function print_wikilist(list) {
+	var num = list.length;
+	if (num === 0) {
+		$("#results_num").html("Pas de résultat");
+		return;
+	}
+	$res = num == 1 ? " résultat" : " résultats";
+	$("#results_num").html(num + $res);
+	
+	var wikitext = $("#list");
+	if (wikitext.length === 0) {
+		wikitext = $("<pre id='list'>");
+		$("#results").append(wikitext);
+	} else {
+		wikitext.empty();
+	}
+	
+	// Content
+    var text = [];
+	for (var i=0; i < list.length; i++) {
+        var l = list[i];
+        line = '';
+        pron = '';
+        if (l.p_pron) {
+            line = "* [[" + l.a_title + "]] {{pron|" + l.p_pron + "|" + l.l_lang + "}}";
+        } else {
+            line = "* [[" + l.a_title + "]]";
+        }
+		text.push(line);
+	}
+    wikitext.html(text.join("\n<br>"))
+}
+
 function prepare_list(list) {
 	for (var i = 0; i < list.length; i++) {
 		var l = list[i];
@@ -404,6 +445,7 @@ function get_form_pars() {
 		'nom-pr' : $("#nom-pr").is(':checked'),
 		'noflat' : $("#noflat").is(':checked'),
 		'without_pron' : $("#without_pron").is(':checked'),
+		'wikilist' : $("#wikilist").is(':checked'),
 		'dev' : $("#dev").is(':checked'),
 	};
 	fpars = remove_all(fpars);
