@@ -44,7 +44,6 @@ var langs = {
 	'it' : 'italien',
 	'ja' : 'japonais',		// AUTRES SYSTÈMES D'ÉCRITURE
 	'ko' : 'coréen',		// AUTRES SYSTÈMES D'ÉCRITURE
-	'ko-Hani' : 'coréen (hanja)',	// AUTRES SYSTÈMES D'ÉCRITURE
 	'la' : 'latin',
 	'ln' : 'lingala',
 	'mn' : 'mongol',	// ALPHABET CYRILLIQUE
@@ -57,6 +56,7 @@ var langs = {
 	'pt' : 'portugais',
 	'ro' : 'roumain',
 	'ru' : 'russe',	// ALPHABET CYRILLIQUE
+    'se' : 'same du Nord',
 	'sl' : 'slovène',
 	'sv' : 'suédois',
 	'tl' : 'tagalog',
@@ -74,23 +74,35 @@ var types = {
 	'adv' : 'adverbe',
 	'adj' : 'adjectif',
 	'adj-num' : 'adjectif numéral',
+    'adj-pos' : 'adjectif possessif',
+    'adv-int' : 'adverbe interrogatif',
 	'conj' : 'conjonction',
+    'conj-coord' : 'conjonction de coordination',
 	'interj' : 'interjection',
-	'prép' : 'préposition',
+	'prep' : 'préposition',
+    'pronom-pers' : 'pronom personnel',
+    'pronom-inter' : 'pronom interrogatif',
+    'pronom-rel' : 'pronom relatif',
 	'prov' : 'proverbe',
 	'prenom' : 'prénom',
 	'onoma' : 'onomatopée',
 	'part' : 'particule',
+    'symb' : 'symbole',
 };
 
 var genres = {
 	'*' : '*',
 	'm' : 'masculin',
+    'msing' : 'masculin singulier',
+    'mplur' : 'masculin pluriel',
 	'f' : 'féminin',
+    'fsing' : 'féminin singulier',
+    'fplur' : 'féminin pluriel',
 	'mf' : 'masculin et féminin',
 	'mf?' : 'masculin et féminin, hésitant',
 	'n' : 'neutre',
 	'c' : 'commun',
+    'sp' : 'singulier et pluriel identiques',
 };
 
 var rows = {
@@ -168,6 +180,7 @@ function print_form() {
 		.append( $("<div id='error'>") );
 	
 	$("#anag_search")
+        .empty()
 		.append(form)
 		.append( $("<div id='results'>") );
 	$("#results")
@@ -402,11 +415,11 @@ function prepare_list(list) {
 			l.lang = "<span class='ulang'>" + l.l_lang + "</span>";
 		}
 		l.type = types[ l.l_type ];
-		if (!l.type) {
+		if (!l.type) {
 			l.type = "<span class='utype'>" + l.l_type + "</span>";
 		}
 		l.genre = genres[ l.l_genre ];
-		if (!l.genre) {
+		if (!l.genre) {
 			l.genre = "<span class='ugenre'>" + l.l_genre + "</span>";
 		}
 		if (l.l_num > 0) {
