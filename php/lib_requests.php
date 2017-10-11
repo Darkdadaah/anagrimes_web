@@ -2,11 +2,13 @@
 require_once( 'lib_strings.php' );
 
 function start_db() {
-	$mydbpars = parse_ini_file("/data/project/anagrimes/anagrimes.cnf");
-	$dbname = $mydbpars['dbname'];
-	$db = openToolDB($dbname);
-	mysqli_set_charset($db, 'utf8');
-	return $db;
+    $ts_pw = posix_getpwuid(posix_getuid());
+    $ts_mycnf = parse_ini_file($ts_pw['dir'] . "/replica.my.cnf");
+    $an_mycnf = parse_ini_file($ts_pw['dir'] . "/anagrimes.cnf");
+	$dbname = $ts_mycnf['user'] . '__' . $an_mycnf['dbname'];
+    $db = new PDO("mysql:host=".$an_mycnf['host'].";dbname=".$dbname, $ts_mycnf['user'], $ts_mycnf['password']);
+    unset($ts_mycnf, $ts_pw, $an_mycnf);
+    return $db;
 }
 
 function get_string_pars($db) {
@@ -17,7 +19,7 @@ function get_string_pars($db) {
 
 	for ($i = 0; $i < count($text); $i++) {
 		if (isset( $_GET[ $text[$i] ] )) {
-			$pars[ $text[$i] ] = mysqli_real_escape_string($db, $_GET[ $text[$i] ]);
+			$pars[ $text[$i] ] = $_GET[ $text[$i] ];
 		}
 	}
 	for ($i = 0; $i < count($bool); $i++) {
@@ -36,54 +38,58 @@ function new_request($db, $pars) {
 	$request = array(
 		'conditions' => array(),
 		'values' => array(),
-		'types' => '',
+        'types' => '',
 		'pars' => $pars
-	);
+    );
+
+    $cond = array();
+    $params = array();
 	
 	# Language? Default: all
 	if (array_key_exists('lang', $pars)) {
-		array_push($request['conditions'], "l_lang=?");
-		array_push($request['values'], mysqli_real_escape_string($db, $pars['lang']));
-		$request['types'] .= "s";
+		array_push($cond, "l_lang = :lang");
+        $params[':lang'] = $pars['lang'];
 	}
 	# Type
 	if (array_key_exists('type', $pars)) {
-		array_push($request['conditions'], "l_type=?");
-		array_push($request['values'], mysqli_real_escape_string($db, $pars['type']));
-		$request['types'] .= "s";
+		array_push($cond, "l_type = :type");
+        $params[':type'] = $pars['type'];
 	}
 	# Genre
 	if (array_key_exists('genre', $pars)) {
-		array_push($request['conditions'], "l_genre=?");
-		array_push($request['values'], mysqli_real_escape_string($db, $pars['genre']));
-		$request['types'] .= "s";
+		array_push($cond, "l_genre = :genre");
+        $params[':genre'] = $pars['genre'];
 	}
 	# Flexion
 	if (!array_key_exists('flex', $pars) or $pars['flex'] == false) {
-		array_push($request['conditions'], "l_is_flexion=FALSE");
+		array_push($cond, "l_is_flexion=FALSE");
 	}
 	# With or without prononciation
 	if (array_key_exists('without_pron', $pars) and $pars['without_pron'] == true) {
-		array_push($request['conditions'], "p_pron IS NULL");
+		array_push($cond, "p_pron IS NULL");
 	}
 	# Locution
 	if (!array_key_exists('loc', $pars) or $pars['loc'] == false) {
-		array_push($request['conditions'], "l_is_locution=FALSE");
+		array_push($cond, "l_is_locution=FALSE");
 	}
 	# Gentilé
 	if (!array_key_exists('gent', $pars) or $pars['gent'] == false) {
-		array_push($request['conditions'], "l_is_gentile=FALSE");
+		array_push($cond, "l_is_gentile=FALSE");
 	}
 	# Nom propre
 	if (!array_key_exists('nom-pr', $pars) or $pars['nom-pr'] == false) {
 		if (array_key_exists('type', $pars) and $pars['type'] != 'nom-pr' && $pars['type'] != 'prenom' && $pars['type'] != 'nom-fam') {
-			array_push($request['conditions'], "(NOT l_type='nom-pr' AND NOT l_type='prenom' AND NOT l_type='nom-fam')");
+			array_push($cond, "(NOT l_type='nom-pr' AND NOT l_type='prenom' AND NOT l_type='nom-fam')");
 		}
-	}
+    }
+
+    $request["conditions"] = $cond;
+    $request["params"] = $params;
 	return $request;	
 }
 
 function get_entries($db, $request, $pars) {
+    
 	# Those are the only fields that we need
 	$fields = array("a_title", "l_genre", "l_is_flexion", "l_is_gentile", "l_is_locution", "l_lang", "l_num", "l_sigle", "l_type", "l_lexid", "p_num", "p_pron", "length(a_title_flat)");
 	$fields_txt = join(", ", $fields);
@@ -98,37 +104,19 @@ function get_entries($db, $request, $pars) {
 	if (isset($request['order'])) {
 		$query .= " ORDER BY " . $request['order'];
 	}
-	$list = array();
+    $list = array();
+
+    $params = array();
 	
+    error_log($query);
 	if ($st = $db->prepare($query)) {
-		# This part is messy because get_results() is not available and
-		# both bind_param and bind_result are a pain to use since they
-		# require a list of refs, so we can't just give them arrays
-		
-		# We need to bind the values for the placeholder
-		# For that, bind_params only accepts refs, so we convert the list
-		$val_params[] = & $request['types'];
-		for($i = 0; $i < count($request['values']); $i++) {
-		  $val_params[] = & $request['values'][$i];
-		}
-		# We also need to bind the values returned, also as refs
-		# We bind the data in $row
-		$row = array();
-		for($i = 0; $i < count($fields); $i++) {
-		  $fields_params[] = & $row[$fields[$i]];
-		}
-		
-		# We bind each value to a placeholder
-		call_user_func_array(array($st, 'bind_param'), $val_params);
-		if ($st->execute()) {
-			# We bind each result field in an array
-			call_user_func_array(array($st, "bind_result"), $fields_params);
+		if ($st->execute($request['params'])) {
 			# Fetch all rows
-			while( $res = $st->fetch() ) {
+			while( $row = $st->fetch(PDO::FETCH_ASSOC) ) {
 				$line = array();
 				# Copy the data from the refs
 				foreach ($row as $k => $v) {
-					$line[$k] = $v;
+			       	$line[$k] = $v;
 				}
 				$list[] = $line;
 			}
@@ -137,10 +125,11 @@ function get_entries($db, $request, $pars) {
 			# several pronunciations are found.
 			$list = fuse_prons($list);
         } else {
-            error_log("Can't execute [".$query."]: " . mysqli_error($db));
+            error_log("Can't execute [".$query."]");
         }
+    } else {
+        error_log("Can't prepare [".$query."]");
     }
-    $st->close();
 	$request['list'] = $list;
 	$request['query'] = $query;
 	return $request;
@@ -190,9 +179,8 @@ function decide_search($column, $pars, $nchars, $nkchars, $request) {
 	# Exact same length? Exact search
 	if ($nchars == $nkchars) {
 		$q = $flat ? non_diacritique($str) : $str;
-		array_push($request['conditions'], "$title=?");
-		array_push($request['values'], $q);
-		$request['types'] .= "s";
+		array_push($request['conditions'], "$title = :title");
+		$request['params'][':title'] = $q;
 	} else {
 		if (preg_match("/\?/", $str) && !preg_match("/\*/", $str)) {
 			array_push($request['conditions'], "length($title)=$nchars");

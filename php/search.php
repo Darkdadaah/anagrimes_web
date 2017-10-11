@@ -17,7 +17,7 @@ function get_list($db) {
     if ($pars['string']) {
         $string = $pars['string'];
         error_log("Graphy requested for '$string'");
-		$string = clean_string($string);
+		$pars['string'] = clean_string($string);
 		# Prepare search!
 		$flat = non_diacritique($string);
 		$char_count = strlen($flat);

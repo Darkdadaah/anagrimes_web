@@ -32,9 +32,8 @@ function get_anagrams_list($db) {
 	
 	# Word?
 	if ($pars['string']) {
-		array_push($request['conditions'], "a_alphagram=?");
-		array_push($request['values'], alphagram($pars['string']));
-		$request['types'] .= "s";
+		array_push($request['conditions'], "a_alphagram = :alphagram");
+		$request['params'][':alphagram'] = alphagram($pars['string']);
 	} else {
 		# no word: no anagrams
 		return array(
