@@ -78,9 +78,9 @@ function new_request($db, $pars) {
 	}
 	# Nom propre
 	if (!array_key_exists('nom-pr', $pars) or $pars['nom-pr'] == false) {
-		if (array_key_exists('type', $pars) and $pars['type'] != 'nom-pr' && $pars['type'] != 'prenom' && $pars['type'] != 'nom-fam') {
+		if (!array_key_exists('type', $pars) or ($pars['type'] != 'nom-pr' and $pars['type'] != 'prenom' and $pars['type'] != 'nom-fam')) {
 			array_push($cond, "(NOT l_type='nom-pr' AND NOT l_type='prenom' AND NOT l_type='nom-fam')");
-		}
+        }
     }
 
     $request["conditions"] = $cond;
