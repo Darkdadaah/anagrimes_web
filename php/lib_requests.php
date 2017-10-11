@@ -76,7 +76,7 @@ function new_request($db, $pars) {
 	}
 	# Nom propre
 	if (!array_key_exists('nom-pr', $pars) or $pars['nom-pr'] == false) {
-		if ($pars['type'] != 'nom-pr' && $pars['type'] != 'prenom' && $pars['type'] != 'nom-fam') {
+		if (array_key_exists('type', $pars) and $pars['type'] != 'nom-pr' && $pars['type'] != 'prenom' && $pars['type'] != 'nom-fam') {
 			array_push($request['conditions'], "(NOT l_type='nom-pr' AND NOT l_type='prenom' AND NOT l_type='nom-fam')");
 		}
 	}
@@ -95,7 +95,7 @@ function get_entries($db, $request, $pars) {
 	if (count($request['conditions']) > 0) {
 		$query = $query . " WHERE " . join(" AND ", $request['conditions']);
 	}
-	if ($request['order']) {
+	if (isset($request['order'])) {
 		$query .= " ORDER BY " . $request['order'];
 	}
 	$list = array();
@@ -136,8 +136,11 @@ function get_entries($db, $request, $pars) {
 			# Additionnal step: the "entries" table returns duplicated rows when
 			# several pronunciations are found.
 			$list = fuse_prons($list);
-		}
-	}
+        } else {
+            error_log("Can't execute [".$query."]: " . mysqli_error($db));
+        }
+    }
+    $st->close();
 	$request['list'] = $list;
 	$request['query'] = $query;
 	return $request;
@@ -187,7 +190,6 @@ function decide_search($column, $pars, $nchars, $nkchars, $request) {
 	# Exact same length? Exact search
 	if ($nchars == $nkchars) {
 		$q = $flat ? non_diacritique($str) : $str;
-		error_log("$str -> $q");
 		array_push($request['conditions'], "$title=?");
 		array_push($request['values'], $q);
 		$request['types'] .= "s";

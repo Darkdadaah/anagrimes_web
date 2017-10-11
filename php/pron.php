@@ -16,10 +16,12 @@ function get_list($db) {
 	$request = new_request($db, $pars);
 	
 	# Word?
-	if ($pars['string']) {
-		$pars['string'] = clean_pron($pars['string']);
+    if (isset($pars['string'])) {
+        $string = $pars['string'];
+        error_log("Pronunciation requested: '$string'");
+		$string = clean_pron($string);
 		# Prepare search!
-		$flat = non_diacritique($pars['string']);
+		$flat = non_diacritique($string);
 		$char_count = strlen($flat);
 		$known_char_count = count_known($flat);
 
@@ -50,7 +52,8 @@ function get_list($db) {
 		$output = $request;
 		$output['status'] = 'success';
 		return $output;
-	} else {
+    } else {
+        error_log('Pronunciation query failed');
 		return array("status" => "error_no_list");
 	}
 }

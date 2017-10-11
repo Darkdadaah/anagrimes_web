@@ -14,10 +14,12 @@ function get_list($db) {
 	$request = new_request($db, $pars);
 	
 	# Word?
-	if ($pars['string']) {
-		$pars['string'] = clean_string($pars['string']);
+    if ($pars['string']) {
+        $string = $pars['string'];
+        error_log("Graphy requested for '$string'");
+		$string = clean_string($string);
 		# Prepare search!
-		$flat = non_diacritique($pars['string']);
+		$flat = non_diacritique($string);
 		$char_count = strlen($flat);
 		$known_char_count = count_known($flat);
 

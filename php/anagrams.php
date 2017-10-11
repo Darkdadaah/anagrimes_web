@@ -6,27 +6,26 @@ $max = array();
 
 function alphagram($word) {
 	# Only a-z letters
-	error_log("$word = alphagram ?");
 	$simple = non_diacritique_full($word);
-	error_log("$word -> $simple");
 	# Sort letters in alphabetical order to make an alphagram
 	$lettres = preg_split('//', $simple, -1, PREG_SPLIT_NO_EMPTY);
 	sort($lettres);
 	$alphag = join(' ', $lettres);
 	$alphag = str_replace(' ', '', $alphag);
+	#error_log("Alphagram of '$word' = '$alphag'");
 	return $alphag;
 }
 
 # Returns a list of anagrams of the string
 function get_anagrams_list($db) {
 	$pars = get_string_pars($db);
-	error_log("[ " . $pars['string'] . " ]");
 	$anagrams = array();
 	if (!isset($pars['string']) || $pars['string'] == '') {
 		return array(
 			'status' => 'empty_request',
 		);
 	}
+	error_log("Anagram requested for '" . $pars['string'] . "'");
 	
 	# Prepare request from parameters
 	$request = new_request($db, $pars);
