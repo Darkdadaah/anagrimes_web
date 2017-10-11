@@ -19,7 +19,7 @@ function get_list($db) {
     if (isset($pars['string'])) {
         $string = $pars['string'];
         error_log("Pronunciation requested for '$string'");
-		$string = clean_pron($string);
+		$pars['string'] = clean_pron($string);
 		# Prepare search!
 		$flat = non_diacritique($string);
 		$char_count = strlen($flat);

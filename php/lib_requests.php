@@ -109,7 +109,11 @@ function get_entries($db, $request, $pars) {
     $params = array();
 	
     error_log($query);
-	if ($st = $db->prepare($query)) {
+    if ($st = $db->prepare($query)) {
+        ob_start();
+        print_r($request['params']);
+        $paramsd = ob_get_clean();
+        error_log($paramsd);
 		if ($st->execute($request['params'])) {
 			# Fetch all rows
 			while( $row = $st->fetch(PDO::FETCH_ASSOC) ) {
@@ -183,16 +187,15 @@ function decide_search($column, $pars, $nchars, $nkchars, $request) {
 		$request['params'][':title'] = $q;
 	} else {
 		if (preg_match("/\?/", $str) && !preg_match("/\*/", $str)) {
-			array_push($request['conditions'], "length($title)=$nchars");
+			array_push($request['conditions'], "length($title) = $nchars");
 		}
 		$search_ok = false;
 		# Include one incomplete part at the start?
 		if (preg_match("/[*\?]+([^*\?]+)+$/", $str, $catch)) {
 			$q = $flat ? utf8_strrev(non_diacritique($catch[1])) : utf8_strrev($catch[1]);
 			$q .= "%";
-			array_push($request['conditions'], $title . "_r LIKE ?");
-			array_push($request['values'], $q);
-			$request['types'] .= 's';
+			array_push($request['conditions'], $title . "_r LIKE :title_part");
+			$request['params']['title_part'] = $q;
 			$search_ok = true;
 			$rhyme = true;
 		}
@@ -200,9 +203,8 @@ function decide_search($column, $pars, $nchars, $nkchars, $request) {
 		if (preg_match("/^([^*\?]+)[*\?]+/", $str, $catch)) {
 			$q = $flat ? non_diacritique($catch[1]) : $catch[1];
 			$q .= "%";
-			array_push($request['conditions'], "$title LIKE ?");
-			array_push($request['values'], $q);
-			$request['types'] .= 's';
+			array_push($request['conditions'], "$title LIKE :title_part2");
+			$request['params']['title_part2'] = $q;
 			$search_ok = true;
 			$rhyme = false;
 		}
@@ -213,9 +215,8 @@ function decide_search($column, $pars, $nchars, $nkchars, $request) {
 			$q = str_replace('*', '.*', $q);
 			$q = str_replace('?', '.', $q);
 			$q = "^$q$";
-			array_push($request['conditions'], $title . " REGEXP ?");
-			array_push($request['values'], $q);
-			$request['types'] .= 's';
+			array_push($request['conditions'], $title . " REGEXP :title_regexp");
+			$request['params']['title_regexp'] = $q;
 			$search_ok = true;
 		}
 		if (!$search_ok) {
