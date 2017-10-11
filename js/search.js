@@ -425,8 +425,9 @@ function prepare_list(list) {
 		if (l.l_num > 0) {
 			l.type += " " + l.l_num;
 		}
-		if (l.l_is_flexion) {
+		if (l.l_is_flexion == 1) {
 			l.type += " (flexion)";
+            console.log(l.l_is_flexion);
 		}
 		list[i] = l;
 	}
