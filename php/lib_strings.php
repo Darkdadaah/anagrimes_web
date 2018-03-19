@@ -22,6 +22,7 @@ function non_diacritique($graphie) {
 	$graphie = Normalizer::normalize($graphie, Normalizer::FORM_D);
 	$graphie = preg_replace('/\pM|\-/u', "", $graphie);
 	$graphie = utf8_strtolower($graphie);
+	$graphie = preg_replace("/'|’/u", "", $graphie);
 	return $graphie;
 }
 
@@ -41,7 +42,8 @@ function count_known($word) {
 
 }
 function clean_string($word) {
-	return str_replace('.', '?', $word);
+	$clean_word = str_replace("'", "’", $word);
+	return str_replace('.', '?', $clean_word);
 }
 
 function clean_pron($word) {
