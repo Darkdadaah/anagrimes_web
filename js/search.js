@@ -253,6 +253,7 @@ function selector(sel, list) {
 function anagrimes() {
 	var pars = get_form_pars();
 	var url = pars.dev ? devapi : api;
+    url = url + "?callback=?";
 	console.log(url + '?' + $.param(pars));
 	console.log(pars);
 	if (!pars.string || pars.string === '') {

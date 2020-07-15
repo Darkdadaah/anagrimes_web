@@ -1,5 +1,6 @@
 <?php
 include_once ( 'shared/common.php' ) ;
+header("Access-Control-Allow-Origin: *");
 
 # This file was shamelessly copied from expose-data/jsonapi.php by Rillke
 $tool_user_name = 'anagrimes';
@@ -17,7 +18,7 @@ if ( array_key_exists( 'HTTP_ORIGIN', $_SERVER ) ) {
 // Response Headers
 header('Content-type: application/json; charset=utf-8');
 header('Cache-Control: private, s-maxage=0, max-age=0, must-revalidate');
-header('x-content-type-options: nosniff');
+header('x-content-type-options: application/json');
 header('X-Frame-Options: SAMEORIGIN');
 header('X-JSONAPI-VERSION: 0.0.0.0');
   
@@ -32,7 +33,7 @@ if ( isset( $origin ) ) {
 		} else {
 			$status["error"] = "Please use this service over http";
 		}
-		echo json_encode($status);
+		echo  $_GET['callback'] . '('.json_encode($status).')';
 		exit;
 	}
 	
@@ -43,7 +44,7 @@ if ( isset( $origin ) ) {
 	} else {
 		header('HTTP/1.0 403 Forbidden');
 		$status["error"] = "Accessing this tool from the origin you are attempting to connect from is not allowed.";
-		echo json_encode($status);
+		echo  $_GET['callback'] . '('.json_encode($status).')';
 		exit;
 	}
 }
@@ -81,6 +82,6 @@ if (isset($action)) {
 	$res['status'] = 'no_action';
 	$res['error'] = 'No action provided. Allowed are: random, anagrams, search.';
 }
-echo json_encode($res);
+echo  $_GET['callback'] . '('.json_encode($res).')';
 ?>
 
